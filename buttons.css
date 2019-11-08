@@ -1,7 +1,8 @@
 :root {
   --color-blue: #428edb;
+  --color-blue-hover: rgba(0, 0, 0, 0.1);
   --color-grey: #f2f2f4;
-  --color-greyHover: rgba(112, 117, 121, 0.08);
+  --color-greyHover: rgba(112, 117, 121, 0.1);
 }
 button {
   border: none;
@@ -21,38 +22,50 @@ button:focus {
 .btn {
   border-radius: 10px;
   height: 54px;
-  text-transform: uppercase;
-  padding: 16px;
-  cursor: pointer;
-  font-size: 100%;
-  position: relative;
-  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-transform: uppercase;
+  padding: 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
-.blue {
-  background: var(--color-blue);
-  color: white;
+.btn > span {
+  z-index: 2;
 }
-.blue:hover {
-  box-shadow: 0 0 0 54px rgba(0, 0, 0, 0.08) inset;
+.btn:hover {
+  transition: box-shadow 0.2s ease;
 }
-.blue:before {
+.btn:before {
   content: '';
   height: 100%;
   width: 100%;
   position: absolute;
   border-radius: 50%;
   top: 0;
-  transform: scale(0);
   left: 0;
-  box-shadow: 0 0 0 54px rgba(0, 0, 0, 0.08) inset;
-  transition: all 0.5s ease-in-out;
+  transform: scale(1.1);
+  opacity: 0;
+  transition: 0.5s ease transform, 0.5s ease opacity;
+  z-index: 1;
 }
-.blue:active:before {
-  transform: scale(3);
-  transition: all 0.5s ease-in-out;
+.btn:active:before {
+  transform: scale(0);
+  opacity: 1;
+  transition: 0s;
+}
+.blue {
+  background: var(--color-blue);
+  color: white;
+  transition: box-shadow 0.2s ease;
+}
+.blue:hover {
+  box-shadow: 0 0 0 54px var(--color-blue-hover) inset;
+}
+.blue:before {
+  background: var(--color-blue-hover);
 }
 .grey {
   background: transparent;
@@ -62,24 +75,13 @@ button:focus {
   box-shadow: 0 0 0 54px var(--color-greyHover) inset;
 }
 .grey:before {
-  content: '';
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  border-radius: 50%;
-  top: 0;
-  transform: scale(0);
-  left: 0;
-  box-shadow: 0 0 0 54px var(--color-greyHover) inset;
-  transition: all 0.5s ease-in-out;
+  background: var(--color-greyHover);
 }
-.grey:active:before {
-  transform: scale(3);
-  transition: all 0.5s ease-in-out;
-}
+
 .with-icon {
   padding: 0;
   border-radius: 100%;
   width: 54px;
   font-size: 23px;
+  line-height: 23px;
 }
