@@ -1,0 +1,85 @@
+:root {
+  --color-blue: #428edb;
+  --color-grey: #f2f2f4;
+  --color-greyHover: rgba(112, 117, 121, 0.08);
+}
+button {
+  border: none;
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+button,
+button:hover,
+button:active,
+button:focus {
+  outline: none;
+}
+.btn {
+  border-radius: 10px;
+  height: 54px;
+  text-transform: uppercase;
+  padding: 16px;
+  cursor: pointer;
+  font-size: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.blue {
+  background: var(--color-blue);
+  color: white;
+}
+.blue:hover {
+  box-shadow: 0 0 0 54px rgba(0, 0, 0, 0.08) inset;
+}
+.blue:before {
+  content: '';
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 50%;
+  top: 0;
+  transform: scale(0);
+  left: 0;
+  box-shadow: 0 0 0 54px rgba(0, 0, 0, 0.08) inset;
+  transition: all 0.5s ease-in-out;
+}
+.blue:active:before {
+  transform: scale(3);
+  transition: all 0.5s ease-in-out;
+}
+.grey {
+  background: transparent;
+  color: var(--color-blue);
+}
+.grey:hover {
+  box-shadow: 0 0 0 54px var(--color-greyHover) inset;
+}
+.grey:before {
+  content: '';
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 50%;
+  top: 0;
+  transform: scale(0);
+  left: 0;
+  box-shadow: 0 0 0 54px var(--color-greyHover) inset;
+  transition: all 0.5s ease-in-out;
+}
+.grey:active:before {
+  transform: scale(3);
+  transition: all 0.5s ease-in-out;
+}
+.with-icon {
+  padding: 0;
+  border-radius: 100%;
+  width: 54px;
+  font-size: 23px;
+}
