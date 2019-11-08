@@ -1,0 +1,8 @@
+{
+  "name": "miniature-eureka",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Turanchoks/miniature-eureka.git",
+  "author": "Pavel Turanchoks <ipuncho@gmail.com>",
+  "license": "MIT"
+}
