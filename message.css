@@ -1,0 +1,110 @@
+:root {
+  --color-in-msg-back: #ffffff;
+  --color-out-msg-back: #eeffde;
+  --color-chat-back: #e6ebee;
+  --color-blue: #428edb;
+  --color-green: #4fae4e;
+  --color-grey: #b2bac1;
+}
+.msg-wrap {
+  background: rgb(212, 212, 212);
+  display: inline-block;
+  max-width: 250px;
+  padding: 5px;
+  border-radius: 10px;
+  position: relative;
+}
+.msg-wrap:before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: 0px;
+  height: 18px;
+  width: 14px;
+}
+.msg-wrap:after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+}
+.msg-wrap.in-msg {
+  background: var(--color-in-msg-back);
+  border-bottom-left-radius: 0;
+}
+.msg-wrap.in-msg:before {
+  left: -14px;
+  background: var(--color-in-msg-back);
+}
+.msg-wrap.in-msg:after {
+  bottom: -3px;
+  left: -22px;
+  border-bottom-right-radius: 100%;
+  background: var(--color-chat-back);
+}
+.msg-wrap.out-msg {
+  background: var(--color-out-msg-back);
+  border-bottom-right-radius: 0;
+}
+.msg-wrap.out-msg:before {
+  right: -14px;
+  background: var(--color-out-msg-back);
+}
+.msg-wrap.out-msg:after {
+  bottom: -2px;
+  right: -22px;
+  border-bottom-left-radius: 100%;
+  background: var(--color-chat-back);
+}
+.message {
+  display: flex;
+  align-items: flex-end;
+  margin: 10px;
+}
+.message.in {
+  align-self: flex-end;
+}
+.msg-name {
+  font-size: 14px;
+  color: var(--color-blue);
+  padding: 0 0 3px;
+}
+.msg-avatar {
+  border-radius: 50%;
+  height: 44px;
+  width: 44px;
+  z-index: 10;
+  margin-right: 5px;
+}
+.msg-text {
+  /* display: flex; */
+  position: relative;
+}
+.msg-time {
+  font-size: 12px;
+  display: inline-block;
+  width: 50px;
+}
+.msg-time > span {
+  position: absolute;
+  right: 1px;
+  bottom: -2px;
+}
+.in-msg .msg-time {
+  color: var(--color-grey);
+}
+.out-msg .msg-time {
+  color: var(--color-green);
+}
+.msg-status {
+  color: var(--color-green);
+  font-size: 12px;
+  width: 15px;
+  padding: 0 0 0 3px;
+}
+.msg-status > span {
+  position: absolute;
+  right: 1px;
+  bottom: -2px;
+}
