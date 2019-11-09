@@ -1,0 +1,28 @@
+.country-code-select {
+  border: 1px solid #808080;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+.country-code-select.active {
+  border: 1px solid #0000ff;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+#main > div > h5 {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+#main > div > p {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--colorPlaceholder);
+}
+
+.hide {
+  display: none;
+}
