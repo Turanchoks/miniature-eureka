@@ -1,26 +1,68 @@
 .country-code-select {
-  border: 1px solid #808080;
+  border: 1px solid #dddddd;
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
+  display: flex;
+}
+
+.country-code-select:hover {
+  border-color: #000;
 }
 
 .country-code-select.active {
-  border: 1px solid #0000ff;
+  border: 1px solid #4ea4f6;
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
 }
 
-#main > div > h5 {
-  font-weight: 600;
-  margin-right: 4px;
+.country-code-view {
+  margin-top: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  border-radius: 10px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
 }
 
-#main > div > p {
-  font-weight: 400;
-  font-size: 13px;
-  color: var(--colorPlaceholder);
+.country-code-view__option {
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+}
+
+.country-code-select__placeholder {
+  flex: 1;
+  color: #95A0AA;
+}
+
+.country-code-select__icon {
+  color: #95A0AA;
+  transform: rotate(90deg);
+  transition: all 0.5s;
+}
+
+.active > .country-code-select__icon {
+  transform: rotate(-90deg);
+}
+
+.country-code-select__placeholder.selected {
+  color: #000;
+}
+
+.country-code-view__option:hover {
+  background: #dddddd;
+}
+
+.dialling-code {
+  color: #95A0AA;
+}
+
+.country-name {
+  flex: 1
 }
 
 .hide {
