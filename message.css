@@ -1,74 +1,108 @@
 :root {
-  --color-in-msg-back: #ffffff;
-  --color-out-msg-back: #eeffde;
+  --color-msg-in-back: #ffffff;
+  --color-msg-out-back: #eeffde;
   --color-chat-back: #e6ebee;
   --color-blue: #428edb;
   --color-green: #4fae4e;
   --color-grey: #b2bac1;
-}
-.msg-wrap {
-  background: rgb(212, 212, 212);
-  display: inline-block;
-  max-width: 250px;
-  padding: 5px;
-  border-radius: 10px;
-  position: relative;
-}
-.msg-wrap:before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  bottom: 0px;
-  height: 18px;
-  width: 14px;
-}
-.msg-wrap:after {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  width: 22px;
-  height: 22px;
-}
-.msg-wrap.in-msg {
-  background: var(--color-in-msg-back);
-  border-bottom-left-radius: 0;
-}
-.msg-wrap.in-msg:before {
-  left: -14px;
-  background: var(--color-in-msg-back);
-}
-.msg-wrap.in-msg:after {
-  bottom: -3px;
-  left: -22px;
-  border-bottom-right-radius: 100%;
-  background: var(--color-chat-back);
-}
-.msg-wrap.out-msg {
-  background: var(--color-out-msg-back);
-  border-bottom-right-radius: 0;
-}
-.msg-wrap.out-msg:before {
-  right: -14px;
-  background: var(--color-out-msg-back);
-}
-.msg-wrap.out-msg:after {
-  bottom: -2px;
-  right: -22px;
-  border-bottom-left-radius: 100%;
-  background: var(--color-chat-back);
+
+  --brd-radius-in: 15px;
+  --brd-radius-out: 8px;
 }
 .message {
   display: flex;
   align-items: flex-end;
   margin: 10px;
 }
-.message.in {
+.message.out {
   align-self: flex-end;
 }
+
+.msg {
+  background: rgb(212, 212, 212);
+  display: inline-flex;
+  max-width: 250px;
+  padding: 10px;
+  position: relative;
+  flex-direction: column;
+  min-height: 22px;
+  justify-content: center;
+}
+.msg.last:before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  height: 18px;
+  width: 14px;
+}
+.msg.last:after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+}
+.msg.msg-in {
+  background: var(--color-msg-in-back);
+  border-radius: 15px;
+  border-bottom-right-radius: var(--brd-radius-in);
+  border-top-right-radius: var(--brd-radius-in);
+  border-top-left-radius: var(--brd-radius-out);
+  border-bottom-left-radius: var(--brd-radius-out);
+}
+
+.msg.last.msg-in:before {
+  left: -14px;
+  bottom: 0px;
+  background: var(--color-msg-in-back);
+}
+.msg.last.msg-in:after {
+  bottom: -3px;
+  left: -22px;
+  border-bottom-right-radius: 100%;
+  background: var(--color-chat-back);
+}
+.msg.msg-out {
+  background: var(--color-msg-out-back);
+  border-bottom-left-radius: var(--brd-radius-in);
+  border-top-left-radius: var(--brd-radius-in);
+  border-top-right-radius: var(--brd-radius-out);
+  border-bottom-right-radius: var(--brd-radius-out);
+}
+.msg.msg-in.last {
+  border-bottom-left-radius: 0;
+}
+.msg.msg-in.first {
+  border-top-left-radius: var(--brd-radius-in);
+}
+.msg.msg-out.last {
+  border-bottom-right-radius: 0;
+}
+.msg.msg-out.first {
+  border-top-right-radius: var(--brd-radius-in);
+}
+.msg.last.msg-out:before {
+  right: -14px;
+  bottom: 0px;
+  background: var(--color-msg-out-back);
+}
+.msg.last.msg-out:after {
+  bottom: -2px;
+  right: -22px;
+  border-bottom-left-radius: 100%;
+  background: var(--color-chat-back);
+}
+
 .msg-name {
   font-size: 14px;
-  color: var(--color-blue);
+
   padding: 0 0 3px;
+}
+.msg-out .msg-name {
+  color: var(--color-green);
+}
+.msg-in .msg-name {
+  color: var(--color-blue);
 }
 .msg-avatar {
   border-radius: 50%;
@@ -76,6 +110,11 @@
   width: 44px;
   z-index: 10;
   margin-right: 5px;
+  overflow: hidden;
+}
+.msg-avatar > img {
+  width: 100%;
+  height: 100%;
 }
 .msg-text {
   /* display: flex; */
@@ -90,16 +129,19 @@
   position: absolute;
   right: 1px;
   bottom: -2px;
+  display: flex;
 }
-.in-msg .msg-time {
+.msg-in .msg-time {
   color: var(--color-grey);
 }
-.out-msg .msg-time {
+.msg-out .msg-time {
   color: var(--color-green);
 }
 .msg-status {
-  color: var(--color-green);
-  font-size: 12px;
+  stroke: var(--color-green);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   width: 15px;
   padding: 0 0 0 3px;
 }
@@ -107,4 +149,16 @@
   position: absolute;
   right: 1px;
   bottom: -2px;
+}
+.quote {
+  background: transparent;
+  padding: 0 5px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.quote-in {
+  border-left: 2px solid var(--color-blue);
+}
+.quote-out {
+  border-left: 2px solid var(--color-green);
 }
