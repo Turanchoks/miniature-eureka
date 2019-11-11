@@ -59,6 +59,7 @@ button:focus {
 .blue {
   background: var(--color-blue);
   color: white;
+  fill: white;
   transition: box-shadow 0.2s ease;
 }
 .blue:hover {
