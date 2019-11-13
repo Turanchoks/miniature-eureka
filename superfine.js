@@ -53,6 +53,14 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
     prevVNode === nextVNode
   ) {
   } else if (
+    // if it's a text node, update it's nodeValue
+    prevVNode !== null &&
+    prevVNode.type === TEXT_NODE &&
+    nextVNode.type === TEXT_NODE &&
+    prevVNode.name !== nextVNode.name
+  ) {
+    node.nodeValue = nextVNode.name;
+  } else if (
     // if it's a new vnode or it's name has changed, recreate from scratch
     // and remove prev node if it existed
     prevVNode == null ||
@@ -64,13 +72,6 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
     if (prevVNode != null) {
       parent.removeChild(prevVNode.node);
     }
-  } else if (
-    // if it's a text node, update it's nodeValue
-    prevVNode.type === TEXT_NODE &&
-    nextVNode.type === TEXT_NODE &&
-    prevVNode.name !== nextVNode.name
-  ) {
-    node.nodeValue = nextVNode.name;
   } else {
     let oldVKid, oldKey, newKey;
 
