@@ -1,68 +1,98 @@
-let selected = null;
+import { h, render } from "../../superfine.js";
+import { countries } from "./countries.js";
 
-const toggleDropdown = () => {
-  const dropdown = document.querySelector('.country-code-view');
-  dropdown.classList.toggle('hide');
+const app = document.getElementById("app");
 
-  const input = document.querySelector('.country-code-select');
-  input.classList.toggle('active');
+let state = {
+  value: "",
+  open: false
 };
 
-const handleChange = country => {
-  const placeholder = document.querySelector(
-    '.country-code-select__placeholder'
-  );
-  selected = country;
-  if (placeholder) {
-    placeholder.classList.add('selected');
-    placeholder.textContent = country.name;
+const setState = partialState => {
+  const nextState = {
+    ...state,
+    ...partialState
+  };
+
+  if (!shallowEquals(state, nextState)) {
+    render(app, select(nextState));
+  }
+  state = nextState;
+};
+
+const oninput = e => {
+  setState({
+    value: e.target.value
+  });
+};
+
+const onkeydown = e => {
+  if (e.keyCode === 13) {
+    setState({
+      items: state.items.concat(e.target.value),
+      value: ""
+    });
   }
 };
 
-const select = () => {
-  const selected = null;
-  const selectViewParent = document.getElementById('main');
+const select = ({ value, open }) => (
+  <div>
+    <div
+      class="country-code-select"
+      onclick={() =>
+        setState({
+          open: !open
+        })
+      }
+    >
+      <div
+        class={
+          value
+            ? "country-code-select__value"
+            : "country-code-select__placeholder"
+        }
+      >
+        {value ? value.name : "Country"}
+      </div>
+      <div class="country-code-select__icon">></div>
+    </div>
+    <ul class={`country-code-view${open ? "" : " hide"}`}>
+      {countries.map((item, i) => {
+        return (
+          <li
+            key={i}
+            class="country-code-view__option"
+            onclick={() =>
+              setState({
+                value: item
+              })
+            }
+          >
+            <span>{item.unicode}</span>
+            <span class="country-name">{item.name}</span>
+            <span class="dialling-code">{item.diallingCode}</span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+);
 
-  //fake input
-  const selectInput = document.createElement('div');
-  selectInput.classList = 'country-code-select';
-  selectInput.addEventListener('click', toggleDropdown);
+render(app, select(state));
 
-  //placeholder
-  const inputPlaceholder = document.createElement('div');
-  inputPlaceholder.classList = 'country-code-select__placeholder';
-  inputPlaceholder.textContent = 'Country';
-  selectInput.appendChild(inputPlaceholder);
+function shallowEquals(obj1, obj2) {
+  const obj1Keys = Object.keys(obj1);
+  const obj2Keys = Object.keys(obj2);
 
-  //icon
-  const dropdownIcon = document.createElement('div');
-  dropdownIcon.classList = 'country-code-select__icon';
-  dropdownIcon.textContent = '>';
-  selectInput.appendChild(dropdownIcon);
+  if (obj1Keys.length !== obj2Keys.length) {
+    return false;
+  }
 
-  selectViewParent.appendChild(selectInput);
+  for (const key of obj1Keys) {
+    if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
 
-  //dropdown options
-  const selectView = document.createElement('div');
-  selectView.classList = 'country-code-view hide';
-  countries.map(country => {
-    const optionEl = document.createElement('div');
-    optionEl.classList = 'country-code-view__option';
-    const flagEl = document.createElement('span');
-    flagEl.textContent = country.emoji;
-    optionEl.appendChild(flagEl);
-    optionEl.insertAdjacentHTML(
-      'beforeend',
-      `<span class="country-name">${country.name}</span>`
-    );
-    optionEl.insertAdjacentHTML(
-      'beforeend',
-      `<span class="dialling-code">${country.diallingCode}</span>`
-    );
-    optionEl.addEventListener('click', () => handleChange(country));
-    selectView.appendChild(optionEl);
-  });
-  selectViewParent.appendChild(selectView);
-};
-
-select();
+  return true;
+}

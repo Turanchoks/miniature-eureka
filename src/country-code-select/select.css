@@ -19,12 +19,12 @@
 
 .country-code-view {
   margin-top: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   height: 300px;
-  display: flex;
-  flex-direction: column;
   overflow: scroll;
+  list-style: none;
+  padding: 0;
 }
 
 .country-code-view__option {
@@ -36,11 +36,16 @@
 
 .country-code-select__placeholder {
   flex: 1;
-  color: #95A0AA;
+  color: #95a0aa;
+}
+
+.country-code-select__value {
+  flex: 1;
+  color: #000;
 }
 
 .country-code-select__icon {
-  color: #95A0AA;
+  color: #95a0aa;
   transform: rotate(90deg);
   transition: all 0.5s;
 }
@@ -49,20 +54,16 @@
   transform: rotate(-90deg);
 }
 
-.country-code-select__placeholder.selected {
-  color: #000;
-}
-
 .country-code-view__option:hover {
   background: #dddddd;
 }
 
 .dialling-code {
-  color: #95A0AA;
+  color: #95a0aa;
 }
 
 .country-name {
-  flex: 1
+  flex: 1;
 }
 
 .hide {
