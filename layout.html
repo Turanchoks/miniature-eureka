@@ -4,6 +4,7 @@
     <style>
       body {
         margin: 0;
+        font-family: sans-serif;
       }
       #wrapper {
         max-width: 1680px;
@@ -31,12 +32,131 @@
         border-bottom: 1px solid #DADCE0;
         background: #fff;
       }
+
+      .chat {
+        margin: 8px;
+        padding: 8px 9px;
+        display: flex;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .chat:hover,
+      .chat_active {
+        background: #F4F4F5;
+      }
+      
+      .chat__avatar {
+        min-width: 54px;
+        height: 54px;
+        margin-right: 10px;
+        position: relative;
+      }
+
+      .chat__avatar_online:before {
+        content: '';
+        background: #4DCD5E;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        display: block;
+        border: 2px solid #fff;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+
+      .chat__img {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+      }
+
+      .chat__info {
+        width: calc(100% - 54px);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat__info_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 3px 0;
+      }
+      .chat__meta {
+        color: #60646A;
+        font-size: 12px;
+      }
+
+      .chat__last-message {
+        white-space: nowrap;
+        min-width: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin-right: 8px;
+        color: #707579;
+      }
+      .chat__last-message_from {
+        color: #000;
+      }
+
+      .chat__badge  {
+        background: #C4C9CC;
+        color: #fff;
+        padding: 6px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 12px;
+        min-width: 8px;
+        text-align: center;
+        flex: 1 0 auto;
+      }
+
+      .chat__badge_unread  {
+        background: #4DCD5E;
+      }
     </style>
   </head>
   <boddy>
     <div id="wrapper">
       <aside id="left-sidebar">
-
+        <div class="chat">
+          <div class="chat__avatar chat__avatar_online">
+            <img src="./ava.jpg" class="chat__img" />
+          </div>
+          <div class="chat__info">
+            <div class="chat__info_row">
+              <div class="chat__name"><strong>Sasha Grey</strong></div>
+              <div class="chat__meta">15:12</div>
+            </div>
+            <div class="chat__info_row">
+              <div class="chat__last-message">Hey, sweet! How r u? wanna have some fun?</div>
+              <div class="chat__badge chat__badge_unread">3</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat chat_active">
+            <div class="chat__avatar">
+              <img src="./ava.jpg" class="chat__img" />
+            </div>
+            <div class="chat__info">
+              <div class="chat__info_row">
+                <div class="chat__name"><strong>Хуярим TG Contest</strong></div>
+                <div class="chat__meta">15:16</div>
+              </div>
+              <div class="chat__info_row">
+                <div class="chat__last-message">
+                  <span class="chat__last-message_from">
+                    Екатерина:
+                  </span>
+                  Мы вчера с Антоном в библиотеке gramjs
+                </div>
+                <div class="chat__badge">35</div>
+              </div>
+            </div>
+          </div>
       </aside>
       <main id="main">
         <header id="main-header">
