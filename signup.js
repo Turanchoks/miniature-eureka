@@ -2,10 +2,11 @@ import { render, h } from "./superfine";
 // import { patch as render, h } from "./superfine-raw";
 import logo from "./assets/logo.png";
 import monkey from "./assets/monkey.png";
+import { airgramClient } from "/airgram";
 
-const nextStep = () => {
+const setLoading = loading => {
   setState({
-    step: 2
+    loading
   });
 };
 
@@ -23,11 +24,16 @@ const handlePhoneChange = e => {
 
 let state = {
   phone: "",
+  code: "",
+  chats: [],
   keepSignedIn: false,
-  step: 1
+  step: "", // phone input | check code | chats
+  loading: true,
+  isAuthorized: false,
+  initialRender: true
 };
 
-const SignUpFirstStep = ({ keepSignedIn, phone }) => {
+const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up">
@@ -40,7 +46,7 @@ const SignUpFirstStep = ({ keepSignedIn, phone }) => {
         </div>
 
         <div class="sign-up__form">
-          <div id="main" class="form-element"></div>
+          <div id="main" class="form-element" />
           <div class="basic-input form-element">
             <input
               value={phone}
@@ -62,7 +68,12 @@ const SignUpFirstStep = ({ keepSignedIn, phone }) => {
           </div>
 
           <div class="buttonsWrapper form-element">
-            <button type="button" onclick={nextStep} class="btn blue">
+            <button
+              disabled={loading}
+              type="button"
+              onclick={() => submitPhone(phone)}
+              class="btn blue"
+            >
               <span>NEXT</span>
             </button>
           </div>
@@ -72,8 +83,13 @@ const SignUpFirstStep = ({ keepSignedIn, phone }) => {
   );
 };
 
-const SignUpSecondStep = ({ phone }) => {
-  console.log(phone);
+const handleCodeChange = e => {
+  setState({
+    code: e.target.value
+  });
+};
+
+const SignUpSecondStep = ({ code, phone, loading }) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up" id="second-step">
@@ -88,17 +104,44 @@ const SignUpSecondStep = ({ phone }) => {
 
         <div class="sign-up__form">
           <div class="basic-input form-element">
-            <input type="text" required />
+            <input
+              type="text"
+              required
+              oninput={handleCodeChange}
+              value={code}
+            />
             <span class="basic-input__placeholder">Code</span>
           </div>
 
           <div class="buttonsWrapper form-element">
-            <button type="button" class="btn blue">
+            <button
+              onclick={() => submitCode(code)}
+              disabled={loading}
+              type="button"
+              class="btn blue"
+            >
               <span>NEXT</span>
             </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const Chats = ({ chats }) => {
+  if (chats.length === 0) {
+    <div class="flex-wrapper flex-wrapper_center">...Chats loading</div>;
+  }
+
+  return (
+    <div class="flex-wrapper flex-wrapper_center">
+      <ul>
+        {chats.map(chat => {
+          console.log("chat", chat);
+          return <li>{chat.title}</li>;
+        })}
+      </ul>
     </div>
   );
 };
@@ -115,11 +158,89 @@ const setState = partialState => {
   state = nextState;
 };
 
-const renderApp = state => {
-  render(
-    rootNode,
-    state.step === 1 ? SignUpFirstStep(state) : SignUpSecondStep(state)
+const submitPhone = phoneNumber => {
+  setLoading(true);
+  airgramClient.api
+    .setAuthenticationPhoneNumber({
+      phoneNumber
+    })
+    .then(r => {
+      setState({
+        loading: false,
+        step: "check code"
+      });
+    });
+};
+
+const submitCode = code => {
+  setLoading(true);
+  airgramClient.api
+    .checkAuthenticationCode({
+      code
+    })
+    .then(r => {
+      setState({
+        loading: false,
+        step: "valid code"
+      });
+    });
+};
+
+const CheckingYourStatus = () => {
+  return (
+    <div class="flex-wrapper flex-wrapper_center">Checking your status...</div>
   );
+};
+
+const Main = state => {
+  const { isAuthorized, loading, step, initialRender } = state;
+  // getAuthorizationState is an offline request
+
+  if (initialRender) {
+    setState({ initialRender: false });
+    airgramClient.api.getAuthorizationState().then(({ response }) => {
+      if (response._ === "authorizationStateReady") {
+        setState({ isAuthorized: true, step: "chats" });
+        airgramClient.api
+          .getChats({
+            offsetOrder: "9223372036854775807",
+            offsetChatId: 0,
+            limit: 10
+          })
+          .then(({ response }) => {
+            const chatIds = response.chatIds || [];
+            Promise.all(
+              chatIds.map(chatId =>
+                airgramClient.api
+                  .getChat({
+                    chatId
+                  })
+                  .then(v => v.response)
+              )
+            ).then(chats => {
+              setState({ chats });
+            });
+          });
+      } else {
+        setState({ step: "phone input" });
+      }
+    });
+  }
+
+  switch (step) {
+    case "phone input":
+      return SignUpFirstStep(state);
+    case "check code":
+      return SignUpSecondStep(state);
+    case "chats":
+      return Chats(state);
+    default:
+      return CheckingYourStatus(state);
+  }
+};
+
+const renderApp = state => {
+  render(rootNode, Main(state));
 };
 
 renderApp(state);

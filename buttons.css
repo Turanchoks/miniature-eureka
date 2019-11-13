@@ -39,7 +39,7 @@ button:focus {
   transition: box-shadow 0.2s ease;
 }
 .btn:before {
-  content: '';
+  content: "";
   height: 100%;
   width: 100%;
   position: absolute;
@@ -55,6 +55,9 @@ button:focus {
   transform: scale(0);
   opacity: 1;
   transition: 0s;
+}
+.btn:disabled {
+  background: var(--color-grey);
 }
 .blue {
   background: var(--color-blue);
