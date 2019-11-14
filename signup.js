@@ -1,8 +1,9 @@
-import { render, h } from "./superfine";
+import { render, h } from './superfine';
 // import { patch as render, h } from "./superfine-raw";
-import logo from "./assets/logo.png";
-import monkey from "./assets/monkey.png";
-import { airgramClient } from "/airgram";
+import logo from './assets/logo.png';
+import { airgramClient } from '/airgram';
+import TwoFactorSetupMonkeyIdle from './monkey/TwoFactorSetupMonkeyIdle.tgs';
+import TwoFactorSetupMonkeyTracking from './monkey/TwoFactorSetupMonkeyTracking.tgs';
 
 const setLoading = loading => {
   setState({
@@ -23,14 +24,15 @@ const handlePhoneChange = e => {
 };
 
 let state = {
-  phone: "",
-  code: "",
+  phone: '',
+  code: '',
   chats: [],
   keepSignedIn: false,
-  step: "", // phone input | check code | chats
-  loading: true,
+  step: '', // phone input | check code | chats
+  loading: false,
   isAuthorized: false,
-  initialRender: true
+  initialRender: true,
+  isCodeValid: true
 };
 
 const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
@@ -89,12 +91,27 @@ const handleCodeChange = e => {
   });
 };
 
-const SignUpSecondStep = ({ code, phone, loading }) => {
+const valid = value => {
+  const player = document.querySelector('tgs-player');
+  const sts = !value;
+  const monkey = sts ? TwoFactorSetupMonkeyIdle : TwoFactorSetupMonkeyTracking;
+  player.load(monkey);
+};
+
+const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up" id="second-step">
         <div class="sign-up__heading">
-          <img class="logo" width="160" src={monkey} />
+          <div class="sign-up__monkey">
+            <tgs-player
+              autoplay
+              loop
+              mode="normal"
+              style="width: 200px;height:200px"
+              src={TwoFactorSetupMonkeyIdle}
+            ></tgs-player>
+          </div>
           <h1 class="title">{phone}</h1>
           <div class="subtitle">
             We have sent you SMS
@@ -138,7 +155,7 @@ const Chats = ({ chats }) => {
     <div class="flex-wrapper flex-wrapper_center">
       <ul>
         {chats.map(chat => {
-          console.log("chat", chat);
+          console.log('chat', chat);
           return <li>{chat.title}</li>;
         })}
       </ul>
@@ -146,7 +163,7 @@ const Chats = ({ chats }) => {
   );
 };
 
-const rootNode = document.getElementById("app");
+const rootNode = document.getElementById('app');
 
 const setState = partialState => {
   const nextState = {
@@ -167,7 +184,7 @@ const submitPhone = phoneNumber => {
     .then(r => {
       setState({
         loading: false,
-        step: "check code"
+        step: 'check code'
       });
     });
 };
@@ -181,7 +198,7 @@ const submitCode = code => {
     .then(r => {
       setState({
         loading: false,
-        step: "valid code"
+        step: 'valid code'
       });
     });
 };
@@ -199,11 +216,11 @@ const Main = state => {
   if (initialRender) {
     setState({ initialRender: false });
     airgramClient.api.getAuthorizationState().then(({ response }) => {
-      if (response._ === "authorizationStateReady") {
-        setState({ isAuthorized: true, step: "chats" });
+      if (response._ === 'authorizationStateReady') {
+        setState({ isAuthorized: true, step: 'chats' });
         airgramClient.api
           .getChats({
-            offsetOrder: "9223372036854775807",
+            offsetOrder: '9223372036854775807',
             offsetChatId: 0,
             limit: 10
           })
@@ -222,17 +239,17 @@ const Main = state => {
             });
           });
       } else {
-        setState({ step: "phone input" });
+        setState({ step: 'phone input' });
       }
     });
   }
 
   switch (step) {
-    case "phone input":
+    case 'phone input':
       return SignUpFirstStep(state);
-    case "check code":
+    case 'check code':
       return SignUpSecondStep(state);
-    case "chats":
+    case 'chats':
       return Chats(state);
     default:
       return CheckingYourStatus(state);
