@@ -4,22 +4,24 @@ import logo from './assets/logo.png';
 import { airgramClient } from '/airgram';
 import TwoFactorSetupMonkeyIdle from './monkey/TwoFactorSetupMonkeyIdle.tgs';
 import TwoFactorSetupMonkeyTracking from './monkey/TwoFactorSetupMonkeyTracking.tgs';
+import { shallowEquals } from './utils';
+import { CountryCodeSelect } from './src/country-code-select/select';
 
 const setLoading = loading => {
   setState({
-    loading
+    loading,
   });
 };
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked
+    keepSignedIn: e.target.checked,
   });
 };
 
 const handlePhoneChange = e => {
   setState({
-    phone: e.target.value
+    phone: e.target.value,
   });
 };
 
@@ -32,10 +34,13 @@ let state = {
   loading: false,
   isAuthorized: false,
   initialRender: true,
-  isCodeValid: true
+  isCodeValid: true,
+  countryCodeSelectValue: '',
+  countryCodeSelectOpen: false,
 };
 
-const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
+const SignUpFirstStep = state => {
+  const { keepSignedIn, phone, loading, countryCodeSelectValue } = state;
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up">
@@ -49,6 +54,7 @@ const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
 
         <div class="sign-up__form">
           <div id="main" class="form-element" />
+          {CountryCodeSelect(state, { setState, classes: 'form-element' })}
           <div class="basic-input form-element">
             <input
               value={phone}
@@ -73,7 +79,7 @@ const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
             <button
               disabled={loading}
               type="button"
-              onclick={() => submitPhone(phone)}
+              onclick={() => submitPhone(`${countryCodeSelectValue.diallingCode}${phone}`)}
               class="btn blue"
             >
               <span>NEXT</span>
@@ -87,7 +93,7 @@ const SignUpFirstStep = ({ keepSignedIn, phone, loading }) => {
 
 const handleCodeChange = e => {
   setState({
-    code: e.target.value
+    code: e.target.value,
   });
 };
 
@@ -168,10 +174,12 @@ const rootNode = document.getElementById('app');
 const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState
+    ...partialState,
   };
 
-  renderApp(nextState);
+  if (!shallowEquals(state, nextState)) {
+    renderApp(nextState);
+  }
   state = nextState;
 };
 
@@ -179,13 +187,16 @@ const submitPhone = phoneNumber => {
   setLoading(true);
   airgramClient.api
     .setAuthenticationPhoneNumber({
-      phoneNumber
+      phoneNumber,
     })
     .then(r => {
       setState({
         loading: false,
-        step: 'check code'
+        step: 'check code',
       });
+    })
+    .catch(e => {
+      console.log(e);
     });
 };
 
@@ -193,12 +204,12 @@ const submitCode = code => {
   setLoading(true);
   airgramClient.api
     .checkAuthenticationCode({
-      code
+      code,
     })
     .then(r => {
       setState({
         loading: false,
-        step: 'valid code'
+        step: 'valid code',
       });
     });
 };
@@ -222,7 +233,7 @@ const Main = state => {
           .getChats({
             offsetOrder: '9223372036854775807',
             offsetChatId: 0,
-            limit: 10
+            limit: 10,
           })
           .then(({ response }) => {
             const chatIds = response.chatIds || [];
@@ -230,7 +241,7 @@ const Main = state => {
               chatIds.map(chatId =>
                 airgramClient.api
                   .getChat({
-                    chatId
+                    chatId,
                   })
                   .then(v => v.response)
               )
