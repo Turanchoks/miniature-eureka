@@ -1,42 +1,41 @@
-import { render, h } from './superfine';
+import { render, h } from "./superfine";
 // import { patch as render, h } from "./superfine-raw";
-import logo from './assets/logo.png';
-import { airgramClient } from '/airgram';
-import TwoFactorSetupMonkeyIdle from './monkey/TwoFactorSetupMonkeyIdle.tgs';
-import TwoFactorSetupMonkeyTracking from './monkey/TwoFactorSetupMonkeyTracking.tgs';
-import { shallowEquals } from './utils';
-import { CountryCodeSelect } from './src/country-code-select/select';
+import logo from "./assets/logo.png";
+import { airgramClient } from "/airgram";
+import TwoFactorSetupMonkeyIdle from "./monkey/TwoFactorSetupMonkeyIdle.tgs";
+import TwoFactorSetupMonkeyTracking from "./monkey/TwoFactorSetupMonkeyTracking.tgs";
+import { shallowEquals } from "./utils";
+import { CountryCodeSelect } from "./src/country-code-select/select";
 
 const setLoading = loading => {
   setState({
-    loading,
+    loading
   });
 };
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked,
+    keepSignedIn: e.target.checked
   });
 };
 
 const handlePhoneChange = e => {
   setState({
-    phone: e.target.value,
+    phone: e.target.value
   });
 };
 
 let state = {
-  phone: '',
-  code: '',
+  phone: "",
+  code: "",
   chats: [],
   keepSignedIn: false,
-  step: '', // phone input | check code | chats
+  step: "", // phone input | check code | chats
   loading: false,
   isAuthorized: false,
-  initialRender: true,
   isCodeValid: true,
-  countryCodeSelectValue: '',
-  countryCodeSelectOpen: false,
+  countryCodeSelectValue: "",
+  countryCodeSelectOpen: false
 };
 
 const SignUpFirstStep = state => {
@@ -54,10 +53,10 @@ const SignUpFirstStep = state => {
 
         <div class="sign-up__form">
           <div id="main" class="form-element" />
-          {CountryCodeSelect(state, { setState, classes: 'form-element' })}
+          {CountryCodeSelect(state, { setState, classes: "form-element" })}
           <div class="basic-input form-element prefix-input">
             <span class="basic-input__prefix">
-              {countryCodeSelectValue.diallingCode || ''}
+              {countryCodeSelectValue.diallingCode || ""}
             </span>
             <input
               value={phone}
@@ -98,12 +97,12 @@ const SignUpFirstStep = state => {
 
 const handleCodeChange = e => {
   setState({
-    code: e.target.value,
+    code: e.target.value
   });
 };
 
 const valid = value => {
-  const player = document.querySelector('tgs-player');
+  const player = document.querySelector("tgs-player");
   const sts = !value;
   const monkey = sts ? TwoFactorSetupMonkeyIdle : TwoFactorSetupMonkeyTracking;
   player.load(monkey);
@@ -121,7 +120,7 @@ const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
               mode="normal"
               style="width: 200px;height:200px"
               src={TwoFactorSetupMonkeyIdle}
-            ></tgs-player>
+            />
           </div>
           <h1 class="title">{phone}</h1>
           <div class="subtitle">
@@ -159,27 +158,31 @@ const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
 
 const Chats = ({ chats }) => {
   if (chats.length === 0) {
-    <div class="flex-wrapper flex-wrapper_center">...Chats loading</div>;
+    return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
   }
 
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <ul>
         {chats.map(chat => {
-          console.log('chat', chat);
-          return <li>{chat.title}</li>;
+          return (
+            <li>
+              {chat.title}
+              <img src={chat.imgSrc} />
+            </li>
+          );
         })}
       </ul>
     </div>
   );
 };
 
-const rootNode = document.getElementById('app');
+const rootNode = document.getElementById("app");
 
 const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState,
+    ...partialState
   };
 
   if (!shallowEquals(state, nextState)) {
@@ -192,12 +195,12 @@ const submitPhone = phoneNumber => {
   setLoading(true);
   airgramClient.api
     .setAuthenticationPhoneNumber({
-      phoneNumber,
+      phoneNumber
     })
     .then(r => {
       setState({
         loading: false,
-        step: 'check code',
+        step: "check code"
       });
     })
     .catch(e => {
@@ -209,13 +212,14 @@ const submitCode = code => {
   setLoading(true);
   airgramClient.api
     .checkAuthenticationCode({
-      code,
+      code
     })
     .then(r => {
       setState({
         loading: false,
-        step: 'valid code',
+        step: "valid code"
       });
+      initAndUpdateAppState();
     });
 };
 
@@ -225,47 +229,80 @@ const CheckingYourStatus = () => {
   );
 };
 
-const Main = state => {
-  const { isAuthorized, loading, step, initialRender } = state;
-  // getAuthorizationState is an offline request
+async function initAndUpdateAppState() {
+  const authorizationState = await airgramClient.api
+    .getAuthorizationState()
+    .then(({ response }) => response._);
 
-  if (initialRender) {
-    setState({ initialRender: false });
-    airgramClient.api.getAuthorizationState().then(({ response }) => {
-      if (response._ === 'authorizationStateReady') {
-        setState({ isAuthorized: true, step: 'chats' });
+  if (authorizationState === "authorizationStateReady") {
+    setState({ isAuthorized: true, step: "chats" });
+
+    const chatsId = await airgramClient.api
+      .getChats({
+        offsetOrder: "9223372036854775807",
+        offsetChatId: 0,
+        limit: 10
+      })
+      .then(({ response }) => response.chatIds || []);
+
+    const chatsInfo = await Promise.all(
+      chatsId.map(chatId =>
         airgramClient.api
-          .getChats({
-            offsetOrder: '9223372036854775807',
-            offsetChatId: 0,
-            limit: 10,
+          .getChat({
+            chatId
+          })
+          .then(v => v.response)
+      )
+    );
+
+    setState({ chats: chatsInfo });
+
+    await Promise.all(
+      chatsInfo.map((chat, index) => {
+        if (!chat.photo.small.local.isDownloadingCompleted) {
+          airgramClient.api.downloadFile({
+            fileId: chat.photo.small.id,
+            priority: index + 1,
+            synchronous: true
+          });
+        }
+      })
+    );
+
+    const chats = await Promise.all(
+      chatsInfo.map(chat =>
+        airgramClient.api
+          .readFile({
+            fileId: chat.photo.small.id
           })
           .then(({ response }) => {
-            const chatIds = response.chatIds || [];
-            Promise.all(
-              chatIds.map(chatId =>
-                airgramClient.api
-                  .getChat({
-                    chatId,
-                  })
-                  .then(v => v.response)
-              )
-            ).then(chats => {
-              setState({ chats });
-            });
-          });
-      } else {
-        setState({ step: 'phone input' });
-      }
-    });
+            const blob = response.data;
+            let imgSrc = "";
+            if (blob) {
+              imgSrc = URL.createObjectURL(blob);
+            }
+            return { ...chat, imgSrc };
+          })
+      )
+    );
+
+    setState({ chats });
+  } else {
+    setState({ step: "phone input" });
   }
+}
+initAndUpdateAppState();
+
+const Main = state => {
+  const { isAuthorized, loading, step } = state;
+  // getAuthorizationState is an offline request
 
   switch (step) {
-    case 'phone input':
+    case "phone input":
       return SignUpFirstStep(state);
-    case 'check code':
+    case "check code":
       return SignUpSecondStep(state);
-    case 'chats':
+    case "chats":
       return Chats(state);
     default:
       return CheckingYourStatus(state);
