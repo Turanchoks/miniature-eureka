@@ -54,7 +54,7 @@ const select = ({ value, open }) => (
       >
         {value ? value.name : "Country"}
       </div>
-      <div class="country-code-select__icon">></div>
+      {open ? <span class="arrow up" /> : <span class="arrow down" />}
     </div>
     <ul class={`country-code-view${open ? "" : " hide"}`}>
       {countries.map((item, i) => {

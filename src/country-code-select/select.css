@@ -69,3 +69,40 @@
 .hide {
   display: none;
 }
+
+.arrow {
+  width: 13px;
+  height: 13px;
+  position: relative;
+  bottom: -5px;
+  left: -10px;
+  transition: 0.4s ease;
+  margin-top: 2px;
+  text-align: left;
+  transform: rotate(45deg);
+  float: right;
+}
+
+.arrow:before,
+.arrow:after {
+  position: absolute;
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  background-color: #000;
+  transition: 0.5s ease;
+}
+.arrow:after {
+  position: absolute;
+  transform: rotate(90deg);
+  top: -5px;
+  left: 5px;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+  left: 3px;
+  bottom: 0;
+}
