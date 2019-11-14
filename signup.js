@@ -55,7 +55,10 @@ const SignUpFirstStep = state => {
         <div class="sign-up__form">
           <div id="main" class="form-element" />
           {CountryCodeSelect(state, { setState, classes: 'form-element' })}
-          <div class="basic-input form-element">
+          <div class="basic-input form-element prefix-input">
+            <span class="basic-input__prefix">
+              {countryCodeSelectValue.diallingCode || ''}
+            </span>
             <input
               value={phone}
               oninput={handlePhoneChange}
@@ -79,7 +82,9 @@ const SignUpFirstStep = state => {
             <button
               disabled={loading}
               type="button"
-              onclick={() => submitPhone(`${countryCodeSelectValue.diallingCode}${phone}`)}
+              onclick={() =>
+                submitPhone(`${countryCodeSelectValue.diallingCode}${phone}`)
+              }
               class="btn blue"
             >
               <span>NEXT</span>
