@@ -156,23 +156,74 @@ const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
   );
 };
 
+
+// TODO: handle all types of content
+const getLastMessageStr = (content) => {
+  switch(content._) {
+    case 'messageText':
+      return content.text.text;
+    case 'messagePhoto':
+      return 'Photo';
+    default:
+      return 'Message'
+  }
+}
+
+// TODO: check if not today, show short day of week
+// if not current week, show m/dd/yy
+const getDate = (date) => {
+  const jsDate = new Date(date * 1000);
+  const hours = jsDate.getHours().toString();
+  const minutes = jsDate.getMinutes().toString();
+  return `${hours}:${minutes.padStart(2, 0)}`;
+}
+
 const Chats = ({ chats }) => {
   if (chats.length === 0) {
     return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
   }
 
   return (
-    <div class="flex-wrapper flex-wrapper_center">
-      <ul>
-        {chats.map(chat => {
-          return (
-            <li>
-              {chat.title}
-              <img src={chat.imgSrc} />
-            </li>
-          );
-        })}
-      </ul>
+    <div class="flex-wrapper">
+      <div id="wrapper">
+        <aside id="left-sidebar">
+          {chats.map(chat => {
+            return (
+              <div class="chat">
+                <div class="chat__avatar chat__avatar_online">
+                  {chat.imgSrc
+                    ? <img src={chat.imgSrc} class="chat__img" />
+                    : <div class="chat__img chat__img_default">
+                        {chat.title.charAt(0)}
+                      </div>
+                  }
+                </div>
+                <div class="chat__info">
+                  <div class="chat__info_row">
+                    <div class="chat__name"><strong>{chat.title}</strong></div>
+                    <div class="chat__meta">{getDate(chat.lastMessage.date)}</div>
+                  </div>
+                  <div class="chat__info_row">
+                    <div class="chat__last-message">
+                      {getLastMessageStr(chat.lastMessage.content)}
+                    </div>
+                    {chat.unreadCount > 0 
+                      ? <div class={`chat__badge ${chat.unreadMentionCount > 0 ? 'chat__badge_unread' : ''}`}>
+                          {chat.unreadCount}
+                        </div>
+                      : ''
+                    }
+                  </div>
+                </div>
+              </div>
+              );
+            })}
+        </aside>
+        <main id="main">
+          <header id="main-header">
+          </header>
+        </main>
+      </div>
     </div>
   );
 };
@@ -259,7 +310,7 @@ async function initAndUpdateAppState() {
 
     await Promise.all(
       chatsInfo.map((chat, index) => {
-        if (!chat.photo.small.local.isDownloadingCompleted) {
+        if (chat.photo && !chat.photo.small.local.isDownloadingCompleted) {
           airgramClient.api.downloadFile({
             fileId: chat.photo.small.id,
             priority: index + 1,
@@ -270,7 +321,8 @@ async function initAndUpdateAppState() {
     );
 
     const chats = await Promise.all(
-      chatsInfo.map(chat =>
+      chatsInfo.map(chat => {
+        if (!chat.photo) return chat;
         airgramClient.api
           .readFile({
             fileId: chat.photo.small.id
@@ -282,7 +334,8 @@ async function initAndUpdateAppState() {
               imgSrc = URL.createObjectURL(blob);
             }
             return { ...chat, imgSrc };
-          })
+          });
+        }
       )
     );
 

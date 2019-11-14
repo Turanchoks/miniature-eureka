@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+#wrapper {
+  max-width: 1680px;
+  border-left: 1px solid #DADCE0;
+  border-right: 1px solid #DADCE0;
+  margin: 0 auto;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+#left-sidebar {
+  width: 25%;
+  min-width: 192px;
+  border-right: 1px solid #DADCE0;
+  overflow-y: auto;
+}
+#main {
+  width: 75%;
+  background: #E6EBEE;
+  min-width: 576px;
+  overflow-y: auto;
+}
+#main-header {
+  height: 60px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  border-bottom: 1px solid #DADCE0;
+  background: #fff;
+}
+
+.chat {
+  margin: 8px;
+  padding: 8px 9px;
+  display: flex;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.chat:hover,
+.chat_active {
+  background: #F4F4F5;
+}
+
+.chat__name {
+  white-space: nowrap;
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-right: 8px;
+}
+
+.chat__avatar {
+  min-width: 54px;
+  height: 54px;
+  margin-right: 10px;
+  position: relative;
+}
+
+.chat__avatar_online:before {
+  content: '';
+  background: #4DCD5E;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: block;
+  border: 2px solid #fff;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.chat__img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+}
+
+.chat__img_default {
+  background: #4EA4F6;
+  color: #fff;
+  line-height: 54px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.chat__info {
+  width: calc(100% - 54px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat__info_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+  .chat__info_row:first-child {
+      margin-top: 8px;
+  }
+
+.chat__meta {
+  color: #60646A;
+  font-size: 12px;
+}
+
+.chat__last-message {
+  white-space: nowrap;
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-right: 8px;
+  color: #707579;
+}
+.chat__last-message_from {
+  color: #000;
+}
+
+.chat__badge  {
+  background: #C4C9CC;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 12px;
+  min-width: 8px;
+  text-align: center;
+}
+
+.chat__badge_unread  {
+  background: #4DCD5E;
+}
