@@ -1,6 +1,6 @@
 import { Airgram, Auth, prompt, toObject } from "@airgram/web";
 import assert from "assert";
-import { setLoading, setState, state } from "./state";
+import { setLoading, setState, state as prevState } from "./state";
 import { normalize } from "./utils";
 
 const TELEGRAM_API_ID = process.env.TELEGRAM_API_ID;
@@ -61,13 +61,13 @@ export async function loadChat(currentChat) {
     );
 
     setState({
-      users: { ...state.users, ...normalize(usersList) }
+      users: { ...prevState.users, ...normalize(usersList) }
     });
 
     await Promise.all(
       usersList.map(({ profilePhoto }, index) => {
         if (profilePhoto && needToDownloadSmallPhoto(profilePhoto)) {
-          downloadFile(profilePhoto.small.id, index + 1);
+          return downloadFile(profilePhoto.small.id, index + 1);
         }
       })
     );
@@ -94,7 +94,7 @@ export async function loadChat(currentChat) {
     );
 
     setState({
-      users: { ...state.users, ...normalize(usersWithProfilePhoto) }
+      users: { ...prevState.users, ...normalize(usersWithProfilePhoto) }
     });
   }
 }

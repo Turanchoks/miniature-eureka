@@ -95,7 +95,6 @@ export const Chats = ({ chats, currentChat, users }) => {
 };
 
 const ChatMessages = ({ messages, type }, users) => {
-  console.log("users", users);
   const isPrivateChat = type._ === "chatTypePrivate";
   return (
     <div class="messages-list">
