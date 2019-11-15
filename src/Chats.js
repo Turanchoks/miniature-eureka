@@ -3,12 +3,10 @@ import { h } from "./superfine";
 import { apiClient, loadChat } from "./api";
 import { setState } from "./state";
 
-export const Chats = ({ chats, currentChat }) => {
+export const Chats = ({ chats, currentChat, users }) => {
   if (chats.length === 0) {
     return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
   }
-
-  console.log("chats", chats);
 
   return (
     <div class="flex-wrapper">
@@ -63,7 +61,9 @@ export const Chats = ({ chats, currentChat }) => {
         <main id="main">
           <header id="main-header" />
           <div>
-            {currentChat.messages ? ChatMessages(currentChat) : "Loading..."}
+            {currentChat.messages
+              ? ChatMessages(currentChat, users)
+              : "Loading..."}
           </div>
         </main>
       </div>
@@ -71,7 +71,8 @@ export const Chats = ({ chats, currentChat }) => {
   );
 };
 
-const ChatMessages = ({ messages, type }) => {
+const ChatMessages = ({ messages, type }, users) => {
+  console.log("users", users);
   const isPrivateChat = type._ === "chatTypePrivate";
   return (
     <div>
@@ -79,7 +80,8 @@ const ChatMessages = ({ messages, type }) => {
         ({
           content: { text, caption, sticker },
           isOutgoing,
-          isChannelPost
+          isChannelPost,
+          senderUserId
         }) => {
           let data;
           if (text) {
@@ -96,7 +98,16 @@ const ChatMessages = ({ messages, type }) => {
               ? "private-message private-message_mine"
               : "private-message private-message_not-mine"
             : "";
-          return <div class={messageClass}>{data}</div>;
+          const senderUser = senderUserId && users[senderUserId];
+          return (
+            <div class={messageClass}>
+              <div>
+                {senderUser && senderUser.firstName}{" "}
+                {senderUser && <img src={senderUser.profilePhotoSrc} />}
+              </div>
+              {data}
+            </div>
+          );
         }
       )}
     </div>

@@ -35,3 +35,14 @@ export const getLastMessageStr = content => {
       return "Message";
   }
 };
+
+export const normalize = list => {
+  const obj = {};
+  for (const item of list) {
+    const { id } = item;
+    if (id && !obj[id]) {
+      obj[id] = item;
+    }
+  }
+  return obj;
+};

@@ -11,9 +11,23 @@
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-react-jsx": "^7.7.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.6.0",
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
     "@airgram/web": "^2.1.1"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "env": {
+      "browser": true,
+      "es6": true,
+      "jest": true,
+      "node": true
+    },
+    "rules": {
+      "no-undef": "error"
+    }
   }
 }

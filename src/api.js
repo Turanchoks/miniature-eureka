@@ -1,6 +1,7 @@
 import { Airgram, Auth, prompt, toObject } from "@airgram/web";
 import assert from "assert";
-import { setLoading, setState } from "./state";
+import { setLoading, setState, state } from "./state";
+import { normalize } from "./utils";
 
 const TELEGRAM_API_ID = process.env.TELEGRAM_API_ID;
 const TELEGRAM_API_HASH = process.env.TELEGRAM_API_HASH;
@@ -13,29 +14,97 @@ export const apiClient = new Airgram({
   apiHash: TELEGRAM_API_HASH
 });
 
-export const loadChat = currentChat => {
+const needToDownloadSmallPhoto = item =>
+  !item.small.local.isDownloadingCompleted &&
+  !item.small.local.isDownloadingActive;
+
+export async function loadChat(currentChat) {
   setState({
     currentChat
   });
 
-  apiClient.api
+  const historyMessages = await apiClient.api
     .getChatHistory({
       chatId: currentChat.id,
       fromMessageId: currentChat.lastMessage.id,
       offset: 0,
       limit: 20
     })
-    .then(({ response }) => {
-      if (response.messages && response.messages.length > 0) {
-        setState({
-          currentChat: {
-            ...currentChat,
-            messages: [...response.messages.reverse(), currentChat.lastMessage]
-          }
-        });
+    .then(({ response }) => response.messages);
+
+  if (historyMessages && historyMessages.length > 0) {
+    const messages = [...historyMessages.reverse(), currentChat.lastMessage];
+
+    setState({
+      currentChat: {
+        ...currentChat,
+        messages
       }
     });
-};
+
+    const userIds = [];
+    for (const message of messages) {
+      const { senderUserId } = message;
+      if (!userIds.includes[senderUserId]) {
+        userIds.push(senderUserId);
+      }
+    }
+
+    const usersList = await Promise.all(
+      userIds.map(userId =>
+        apiClient.api
+          .getUser({
+            userId
+          })
+          .then(({ response }) => response)
+      )
+    );
+
+    setState({
+      users: { ...state.users, ...normalize(usersList) }
+    });
+
+    await Promise.all(
+      usersList.map(({ profilePhoto }, index) => {
+        if (profilePhoto && needToDownloadSmallPhoto(profilePhoto)) {
+          downloadFile(profilePhoto.small.id, index + 1);
+        }
+      })
+    );
+
+    const usersWithProfilePhoto = await Promise.all(
+      usersList.map(user => {
+        const { profilePhoto } = user;
+        if (!profilePhoto || !profilePhoto.small.id) {
+          return Promise.resolve(user);
+        }
+        return apiClient.api
+          .readFile({
+            fileId: profilePhoto.small.id
+          })
+          .then(({ response }) => {
+            const blob = response.data;
+            let profilePhotoSrc = "";
+            if (blob) {
+              profilePhotoSrc = URL.createObjectURL(blob);
+            }
+            return { ...user, profilePhotoSrc };
+          });
+      })
+    );
+
+    setState({
+      users: { ...state.users, ...normalize(usersWithProfilePhoto) }
+    });
+  }
+}
+
+const downloadFile = (fileId, priority = 1) =>
+  apiClient.api.downloadFile({
+    fileId: fileId,
+    priority,
+    synchronous: true
+  });
 
 export async function initUpdateApiData() {
   const authorizationState = await apiClient.api
@@ -72,11 +141,7 @@ export async function initUpdateApiData() {
     await Promise.all(
       chatsInfo.map((chat, index) => {
         if (chat.photo && !chat.photo.small.local.isDownloadingCompleted) {
-          return apiClient.api.downloadFile({
-            fileId: chat.photo.small.id,
-            priority: index + 1,
-            synchronous: true
-          });
+          return downloadFile(chat.photo.small.id, index + 1);
         }
       })
     );
