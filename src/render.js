@@ -6,9 +6,9 @@ const EMPTY_OBJ = {};
 const EMPTY_ARR = [];
 
 const patchProperty = (node, key, prevValue, nextValue, isSvg) => {
-  if (key === "key" || key === "ref") {
+  if (key === 'key' || key === 'ref') {
   } else if (!isSvg && key in node) {
-    node[key] = nextValue == null ? "" : nextValue;
+    node[key] = nextValue == null ? '' : nextValue;
   } else if (nextValue == null || nextValue === false) {
     node.removeAttribute(key);
   } else {
@@ -17,20 +17,21 @@ const patchProperty = (node, key, prevValue, nextValue, isSvg) => {
 };
 
 const createNode = vnode => {
+  // debugger;
   const { name, props, children, type } = vnode;
-  const isSvg = name === "svg";
+  const isSvg = name === 'svg';
 
   let node;
   if (type === TEXT_NODE) {
     node = document.createTextNode(name);
   } else if (isSvg) {
-    node = document.createElementNS("http://www.w3.org/2000/svg", name);
+    node = document.createElementNS('http://www.w3.org/2000/svg', name);
   } else {
     node = document.createElement(name);
   }
 
   for (const prop in props) {
-    if (prop === "ref") {
+    if (prop === 'ref') {
       props[prop](node);
     } else {
       patchProperty(node, prop, null, props[prop], isSvg);
@@ -42,37 +43,37 @@ const createNode = vnode => {
   }
 
   vnode.node = node;
+  node.vnode = vnode;
+
   return node;
 };
 
 const getKey = vnode => (vnode == null ? null : vnode.key);
 
-const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
-  if (
-    // if vnode hasn't changed, do nothing
-    prevVNode === nextVNode
-  ) {
+export const render = (parentNode, nextVNode, isSvg) => {
+  console.log(nextVNode);
+  const prevVNode = parentNode.vnode;
+  const isMount = prevVNode == null;
+  let node;
+
+  if (prevVNode === nextVNode) {
   } else if (
-    // if it's a text node, update it's nodeValue
-    prevVNode !== null &&
+    !isMount &&
     prevVNode.type === TEXT_NODE &&
     nextVNode.type === TEXT_NODE &&
     prevVNode.name !== nextVNode.name
   ) {
+    node = prevVNode.node;
     node.nodeValue = nextVNode.name;
-  } else if (
-    // if it's a new vnode or it's name has changed, recreate from scratch
-    // and remove prev node if it existed
-    prevVNode == null ||
-    prevVNode.name !== nextVNode.name
-  ) {
-    const newNode = createNode(nextVNode);
-    parent.insertBefore(newNode, node);
-    node = newNode;
-    if (prevVNode != null) {
-      parent.removeChild(prevVNode.node);
-    }
+  } else if (isMount) {
+    node = createNode(nextVNode);
+    parentNode.appendChild(node);
+  } else if (prevVNode.name !== nextVNode.name) {
+    node = createNode(nextVNode);
+    parentNode.appendChild(node);
+    parentNode.removeChild(prevVNode.node);
   } else {
+    node = prevVNode.node;
     let oldVKid, oldKey, newKey;
 
     let oldHead = 0;
@@ -81,7 +82,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
     let oldTail = prevVNode.children.length - 1;
     let newTail = nextVNode.children.length - 1;
 
-    isSvg = isSvg || nextVNode.name === "svg";
+    isSvg = isSvg || nextVNode.name === 'svg';
 
     const oldNewPropsKeys = new Set(
       Object.keys(prevVNode.props).concat(Object.keys(nextVNode.props))
@@ -89,7 +90,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
 
     for (const key of oldNewPropsKeys) {
       const prevValue =
-        key === "selected" || key === "value" || key === "checked"
+        key === 'selected' || key === 'value' || key === 'checked'
           ? node[key]
           : prevVNode.props[key];
 
@@ -110,10 +111,8 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
         break;
       }
 
-      patchNode(
-        node,
+      render(
         prevVNode.children[oldHead].node,
-        prevVNode.children[oldHead],
         nextVNode.children[newHead],
         isSvg
       );
@@ -129,10 +128,8 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
         break;
       }
 
-      patchNode(
-        node,
+      render(
         prevVNode.children[oldTail].node,
-        prevVNode.children[oldTail],
         nextVNode.children[newTail],
         isSvg
       );
@@ -185,43 +182,27 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
 
         if (newKey == null || prevVNode.type === ELEMENT_NODE) {
           if (oldKey == null) {
-            patchNode(
-              node,
-              oldVKid && oldVKid.node,
-              oldVKid,
-              nextVNode.children[newHead],
-              isSvg
-            );
+            render(oldVKid && oldVKid.node, nextVNode.children[newHead], isSvg);
             newHead++;
           }
           oldHead++;
         } else {
           if (oldKey === newKey) {
-            patchNode(
-              node,
-              oldVKid.node,
-              oldVKid,
-              nextVNode.children[newHead],
-              isSvg
-            );
+            render(oldVKid.node, nextVNode.children[newHead], isSvg);
             newKeyed.add(newKey);
             oldHead++;
           } else {
             let tmpVKid = keyed[newKey];
             if (tmpVKid != null) {
-              patchNode(
-                node,
+              render(
                 node.insertBefore(tmpVKid.node, oldVKid && oldVKid.node),
-                tmpVKid,
                 nextVNode.children[newHead],
                 isSvg
               );
               newKeyed.add(newKey);
             } else {
-              patchNode(
-                node,
+              render(
                 oldVKid && oldVKid.node,
-                null,
                 nextVNode.children[newHead],
                 isSvg
               );
@@ -247,7 +228,11 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
     }
   }
 
-  nextVNode.node = node;
+  parentNode.vnode = nextVNode;
+  if (node) {
+    nextVNode.node = node;
+  }
+
   return node;
 };
 
@@ -258,17 +243,12 @@ const createVNode = (name, props, children, node, key, type) => {
     children,
     node,
     type,
-    key
+    key,
   };
 };
 
 const createTextVNode = (value, node) => {
   return createVNode(value, EMPTY_OBJ, EMPTY_ARR, node, null, TEXT_NODE);
-};
-
-export const render = (node, vnode) => {
-  patchNode(node.parentNode, node, node.vnode || hydrateNode(node), vnode);
-  node.vnode = vnode;
 };
 
 export const h = (component, props, ...rest) => {
@@ -278,41 +258,39 @@ export const h = (component, props, ...rest) => {
 
   while (rest.length > 0) {
     const vnode = rest.shift();
+    console.log(vnode);
 
     if (Array.isArray(vnode)) {
       rest.unshift(...vnode);
-    } else if (vnode !== false || vnode !== true || vnode != null) {
-      const child = typeof vnode === "object" ? vnode : createTextVNode(vnode);
+    } else if (vnode === false || vnode === true || vnode == null) {
+    } else {
+      const child = typeof vnode === 'object' ? vnode : createTextVNode(vnode);
       children.push(child);
     }
-  }
-
-  if (typeof component === "function") {
-    return component(props, children);
   }
 
   return createVNode(component, props, children, null, props.key);
 };
 
-const hydrateNode = node => {
-  if (node.nodeType === TEXT_NODE) {
-    return createTextVNode(node.nodeValue, node);
-  }
+// const hydrateNode = node => {
+//   if (node.nodeType === TEXT_NODE) {
+//     return createTextVNode(node.nodeValue, node);
+//   }
 
-  const children = [];
-  for (const childNode of node.childNodes) {
-    children.push(hydrateNode(childNode));
-  }
+//   const children = [];
+//   for (const childNode of node.childNodes) {
+//     children.push(hydrateNode(childNode));
+//   }
 
-  return createVNode(
-    node.nodeName.toLowerCase(),
-    EMPTY_OBJ,
-    children,
-    node,
-    null,
-    ELEMENT_NODE
-  );
-};
+//   return createVNode(
+//     node.nodeName.toLowerCase(),
+//     EMPTY_OBJ,
+//     children,
+//     node,
+//     null,
+//     ELEMENT_NODE
+//   );
+// };
 
 export function shallowEquals(obj1, obj2) {
   const obj1Keys = Object.keys(obj1);

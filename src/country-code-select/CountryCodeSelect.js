@@ -1,35 +1,35 @@
-import { h, render } from "../superfine.js";
-import { countries } from "./countries.js";
-import { setState } from "../state";
+import { h, render } from '../render.js';
+import { countries } from './countries.js';
+import { setState } from '../state';
 
-const app = document.getElementById("app");
+const app = document.getElementById('app');
 
 export const CountryCodeSelect = ({
   state: { countryCodeSelectValue: value, countryCodeSelectOpen: open },
-  classes
+  classes,
 }) => {
   return (
-    <div class={`country-code-container${classes ? ` ${classes}` : ""}`}>
+    <div class={`country-code-container${classes ? ` ${classes}` : ''}`}>
       <div
         class="country-code-select"
         onclick={() =>
           setState({
-            countryCodeSelectOpen: !open
+            countryCodeSelectOpen: !open,
           })
         }
       >
         <div
           class={
             value
-              ? "country-code-select__value"
-              : "country-code-select__placeholder"
+              ? 'country-code-select__value'
+              : 'country-code-select__placeholder'
           }
         >
-          {value ? value.name : "Country"}
+          {value ? value.name : 'Country'}
         </div>
         {open ? <span class="arrow up" /> : <span class="arrow down" />}
       </div>
-      <ul class={`country-code-list${open ? "" : " hide"}`}>
+      <ul class={`country-code-list${open ? '' : ' hide'}`}>
         {countries.map((item, i) => {
           return (
             <li
@@ -38,7 +38,7 @@ export const CountryCodeSelect = ({
               onclick={() =>
                 setState({
                   countryCodeSelectOpen: false,
-                  countryCodeSelectValue: item
+                  countryCodeSelectValue: item,
                 })
               }
             >

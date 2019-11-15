@@ -1,10 +1,10 @@
-import { setState, setLoading } from "./state";
-import { apiClient, initUpdateApiData } from "./api";
-import { h } from "./superfine";
+import { setState, setLoading } from './state';
+import { apiClient, initUpdateApiData } from './api';
+import { h } from './render';
 
 const handleCodeChange = e => {
   setState({
-    code: e.target.value
+    code: e.target.value,
   });
 };
 
@@ -12,12 +12,12 @@ const submitCode = code => {
   setLoading(true);
   apiClient.api
     .checkAuthenticationCode({
-      code
+      code,
     })
     .then(r => {
       setState({
         loading: false,
-        step: "valid code"
+        step: 'valid code',
       });
       initUpdateApiData();
     });

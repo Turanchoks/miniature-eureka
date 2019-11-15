@@ -1,17 +1,17 @@
-import { h, render } from "./src/superfine.js";
+import { h, render } from '../src/render.js';
 
-const app = document.getElementById("app");
+const app = document.getElementById('app');
 
 let state = {
-  value: "test",
+  value: 'test',
   counter: 0,
-  items: []
+  items: [],
 };
 
 const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState
+    ...partialState,
   };
 
   if (!shallowEquals(state, nextState)) {
@@ -22,13 +22,13 @@ const setState = partialState => {
 
 const count = (sign = 1) => {
   setState({
-    counter: state.counter + sign
+    counter: state.counter + sign,
   });
 };
 
 const oninput = e => {
   setState({
-    value: e.target.value
+    value: e.target.value,
   });
 };
 
@@ -36,19 +36,50 @@ const onkeydown = e => {
   if (e.keyCode === 13) {
     setState({
       items: state.items.concat(e.target.value),
-      value: ""
+      value: '',
     });
   }
 };
 
-// const comp = ({ value, counter, items }) => (
+const comp = ({ value, counter, items }) => (
+  <div>
+    <h1>Telegram</h1>
+    <div>kjdlfjks</div>
+    <ul style="font-size: 2em;">
+      {items.map((item, i) => {
+        return (
+          <li key={i}>
+            {item}{' '}
+            <button
+              onclick={() =>
+                setState({
+                  items: items.filter((_, ii) => i !== ii),
+                })
+              }
+            >
+              X
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+    {null}
+    {false}
+    <div>sdjka</div>
+    {true}
+    <h2>{counter}</h2>
+    <button onclick={counter > 3 ? () => count(-1) : null}>-</button>
+    <button onclick={() => count(1)}>+</button>
+    <input value={value} oninput={oninput} onkeydown={onkeydown} />
+  </div>
+);
+
+// const comp = ({ value, items }) => (
 //   <div>
-//     <h1>Telegram</h1>
-//     <div>kjdlfjks</div>
-//     <ul style="font-size: 2em;">
+//     <ul>
 //       {items.map((item, i) => {
 //         return (
-//           <li key={i}>
+//           <li ref={console.log} key={i}>
 //             {item}{' '}
 //             <button
 //               onclick={() =>
@@ -63,40 +94,9 @@ const onkeydown = e => {
 //         );
 //       })}
 //     </ul>
-//     {null}
-//     {false}
-//     <div>sdjka</div>
-//     {true}
-//     <h2>{counter}</h2>
-//     <button onclick={counter > 3 ? () => count(-1) : null}>-</button>
-//     <button onclick={() => count(1)}>+</button>
 //     <input value={value} oninput={oninput} onkeydown={onkeydown} />
 //   </div>
 // );
-
-const comp = ({ value, items }) => (
-  <div>
-    <ul>
-      {items.map((item, i) => {
-        return (
-          <li ref={console.log} key={i}>
-            {item}{" "}
-            <button
-              onclick={() =>
-                setState({
-                  items: items.filter((_, ii) => i !== ii)
-                })
-              }
-            >
-              X
-            </button>
-          </li>
-        );
-      })}
-    </ul>
-    <input value={value} oninput={oninput} onkeydown={onkeydown} />
-  </div>
-);
 
 render(app, comp(state));
 

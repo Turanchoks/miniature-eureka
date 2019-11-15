@@ -1,5 +1,5 @@
-import { getDate, getLastMessageStr } from "./utils";
-import { h } from "./superfine";
+import { getDate, getLastMessageStr } from './utils';
+import { h } from './render';
 
 export const Chats = ({ chats }) => {
   if (chats.length === 0) {
@@ -39,14 +39,14 @@ export const Chats = ({ chats }) => {
                       <div
                         class={`chat__badge ${
                           chat.unreadMentionCount > 0
-                            ? "chat__badge_unread"
-                            : ""
+                            ? 'chat__badge_unread'
+                            : ''
                         }`}
                       >
                         {chat.unreadCount}
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
                   </div>
                 </div>

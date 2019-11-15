@@ -1,7 +1,7 @@
-import { h } from "./superfine";
-import { SignUpFirstStep } from "./SignUpFirstStep";
-import { SignUpSecondStep } from "./SignUpSecondStep";
-import { Chats } from "./Chats";
+import { h } from './render';
+import { SignUpFirstStep } from './SignUpFirstStep';
+import { SignUpSecondStep } from './SignUpSecondStep';
+import { Chats } from './Chats';
 
 const CheckingYourStatus = () => {
   return (
@@ -14,11 +14,11 @@ export const App = state => {
   // getAuthorizationState is an offline request
 
   switch (step) {
-    case "phone input":
+    case 'phone input':
       return SignUpFirstStep(state);
-    case "check code":
+    case 'check code':
       return SignUpSecondStep(state);
-    case "chats":
+    case 'chats':
       return Chats(state);
     default:
       return CheckingYourStatus(state);

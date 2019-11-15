@@ -1,4 +1,4 @@
-import { h, render } from "./src/superfine";
+import { h, render } from '../src/render';
 // const root = document.getElementById('root');
 // const data = [[123, 'fsdfsdf'], [4325, 'sdajfklasdf'], [432543, 'sdjfklasfd']];
 // const exampleTemplate = document.getElementById('tg-example');
@@ -26,18 +26,13 @@ const push = href => {
   renderRouter();
 };
 
-const Link = ({ to, onclick, ...props }, children) => {
-  console.log(children);
+const Link = ({ to, children }) => {
   return (
     <a
-      {...props}
       href={to}
       onclick={e => {
         e.preventDefault();
         push(to);
-        if (typeof onclick === "function") {
-          onclick();
-        }
       }}
     >
       {children}
@@ -45,20 +40,14 @@ const Link = ({ to, onclick, ...props }, children) => {
   );
 };
 
-const rootNode = document.getElementById("root");
-const rootForRouterNode = document.getElementById("root-for-router");
+const rootNode = document.getElementById('root');
+const rootForRouterNode = document.getElementById('root-for-router');
 render(
   rootNode,
   <div>
-    <h1>
-      <Link to="/">/</Link>
-    </h1>
-    <h1>
-      <Link to="/1">/1</Link>
-    </h1>
-    <h1>
-      <Link to="/2">/2</Link>
-    </h1>
+    <h1>{Link({ to: '/', children: '/' })}</h1>
+    <h1>{Link({ to: '/1', children: '/1' })}</h1>
+    <h1>{Link({ to: '/2', children: '/2' })}</h1>
   </div>
 );
 
