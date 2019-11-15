@@ -59,12 +59,35 @@ export const Chats = ({ chats, currentChat, users }) => {
           })}
         </aside>
         <main id="main">
-          <header id="main-header" />
-          <div>
-            {currentChat.messages
-              ? ChatMessages(currentChat, users)
-              : "Loading..."}
-          </div>
+          {currentChat.messages
+            ? <header id="main-header">
+                <div class="chat__avatar chat__avatar_small">
+                  {currentChat.imgSrc ? (
+                    <img src={currentChat.imgSrc} class="chat__img" />
+                  ) : (
+                    <div class="chat__img chat__img_default">
+                      {currentChat.title.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div class="chat__info">
+                  <div class="chat__info_row condensed">
+                    <div class="chat__name">
+                      <strong>{currentChat.title}</strong>
+                    </div>
+                  </div>
+                  <div class="chat__info_row condensed">
+                    <div class="chat__status">
+                      online
+                    </div>
+                  </div>
+                </div>
+              </header>
+            : ''
+          }
+          {currentChat.messages
+            ? ChatMessages(currentChat, users)
+            : "Loading..."}
         </main>
       </div>
     </div>
@@ -75,16 +98,19 @@ const ChatMessages = ({ messages, type }, users) => {
   console.log("users", users);
   const isPrivateChat = type._ === "chatTypePrivate";
   return (
-    <div>
+    <div class="messages-list">
       {messages.map(
         ({
-          content: { text, caption, sticker },
+          content: { text, caption, sticker, photo },
+          date,
           isOutgoing,
           isChannelPost,
           senderUserId
-        }) => {
+        }, index) => {
           let data;
-          if (text) {
+          if (photo) {
+            data = "WIP: photo with caption ";
+          } else if (text) {
             data = text.text;
           } else if (caption) {
             data = caption.text;
@@ -93,21 +119,58 @@ const ChatMessages = ({ messages, type }, users) => {
           } else {
             data = "WIP";
           }
-          const messageClass = isPrivateChat
-            ? isOutgoing
-              ? "private-message private-message_mine"
-              : "private-message private-message_not-mine"
-            : "";
+          const messageWrapperClass = isOutgoing
+              ? "message out"
+              : "message in";
+
+          const messageClass = isOutgoing
+              ? "msg msg-out"
+              : "msg msg-in";
+
           const senderUser = senderUserId && users[senderUserId];
-          return (
-            <div class={messageClass}>
-              <div>
-                {senderUser && senderUser.firstName}{" "}
-                {senderUser && <img src={senderUser.profilePhotoSrc} />}
+
+          const nextElement = messages[index+1];
+          const isLast = !nextElement
+            || nextElement && nextElement.senderUserId !== senderUserId;
+          const lastClass = isLast
+            ? "last"
+            : "";
+          
+          const prevElement = messages[index-1];
+          const isFirst = !prevElement
+            || prevElement && prevElement.senderUserId !== senderUserId;
+          const firstClass = isFirst
+            ? "first"
+            : "";
+
+          const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
+
+          return <div class={messageWrapperClass}>
+            {showFullMessage
+              ? <div class="msg-avatar">
+                  {senderUser.profilePhotoSrc ? (
+                    <img id="msg-avatar" src={senderUser.profilePhotoSrc} />
+                  ) : (
+                    <div class="chat__img chat__img_default">
+                      {senderUser.firstName.charAt(0)}
+                    </div>
+                  )}
+                </div>
+              : ''
+            }
+            <div class={`${messageClass} ${lastClass} ${firstClass}`}>
+              {showFullMessage
+                ? <div class="msg-name">{senderUser.firstName}{" "}</div>
+                : ''
+              }
+              <div class="msg-text">
+                <span>{data}</span>
+                <div class="msg-time">
+                  <span>{getDate(date)}</span>
+                </div>
               </div>
-              {data}
             </div>
-          );
+          </div>;
         }
       )}
     </div>
