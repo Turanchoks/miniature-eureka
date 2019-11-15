@@ -1,35 +1,41 @@
-import { h } from './render';
-import { setState, setLoading } from './state';
-import { apiClient } from './api';
-import logo from '../assets/logo.png';
-import { CountryCodeSelect } from './country-code-select/CountryCodeSelect';
+import { h } from "./render";
+import { setState, setLoading } from "./state";
+import { apiClient } from "./api";
+import logo from "../assets/logo.png";
+import { CountryCodeSelect } from "./country-code-select/CountryCodeSelect";
 
 const handlePhoneChange = e => {
   setState({
-    phone: e.target.value,
+    phone: e.target.value
   });
 };
 
-const submitPhone = phoneNumber => {
-  setLoading(true);
-  apiClient.api
-    .setAuthenticationPhoneNumber({
-      phoneNumber,
-    })
-    .then(r => {
-      setState({
-        loading: false,
-        step: 'check code',
-      });
-    })
-    .catch(e => {
-      console.log(e);
-    });
+// const submitPhone = phoneNumber => {
+//   setLoading(true);
+//   apiClient.api
+//     .setAuthenticationPhoneNumber({
+//       phoneNumber
+//     })
+//     .then(r => {
+//       setState({
+//         loading: false,
+//         step: "check code"
+//       });
+//     })
+//     .catch(e => {
+//       console.log(e);
+//     });
+// };
+
+const submitPhone = () => {
+  setState({
+    step: "check code"
+  });
 };
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked,
+    keepSignedIn: e.target.checked
   });
 };
 
@@ -48,10 +54,10 @@ export const SignUpFirstStep = state => {
 
         <div class="sign-up__form">
           <div id="main" class="form-element" />
-          {CountryCodeSelect({ state, classes: 'form-element' })}
+          {CountryCodeSelect({ state, classes: "form-element" })}
           <div class="basic-input form-element prefix-input">
             <span class="basic-input__prefix">
-              {countryCodeSelectValue.diallingCode || ''}
+              {countryCodeSelectValue.diallingCode || ""}
             </span>
             <input
               value={phone}
