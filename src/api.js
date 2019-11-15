@@ -23,14 +23,14 @@ export const loadChat = currentChat => {
       chatId: currentChat.id,
       fromMessageId: currentChat.lastMessage.id,
       offset: 0,
-      limit: 15
+      limit: 20
     })
     .then(({ response }) => {
       if (response.messages && response.messages.length > 0) {
         setState({
           currentChat: {
             ...currentChat,
-            messages: response.messages
+            messages: [...response.messages.reverse(), currentChat.lastMessage]
           }
         });
       }

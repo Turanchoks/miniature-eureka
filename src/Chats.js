@@ -8,6 +8,8 @@ export const Chats = ({ chats, currentChat }) => {
     return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
   }
 
+  console.log("chats", chats);
+
   return (
     <div class="flex-wrapper">
       <div id="wrapper">
@@ -69,22 +71,34 @@ export const Chats = ({ chats, currentChat }) => {
   );
 };
 
-const ChatMessages = ({ messages }) => {
+const ChatMessages = ({ messages, type }) => {
+  const isPrivateChat = type._ === "chatTypePrivate";
   return (
-    <ul>
-      {messages.map(({ content: { text, caption, sticker } }) => {
-        let data;
-        if (text) {
-          data = text.text;
-        } else if (caption) {
-          data = caption.text;
-        } else if (sticker) {
-          data = sticker.emoji;
-        } else {
-          data = "WIP";
+    <div>
+      {messages.map(
+        ({
+          content: { text, caption, sticker },
+          isOutgoing,
+          isChannelPost
+        }) => {
+          let data;
+          if (text) {
+            data = text.text;
+          } else if (caption) {
+            data = caption.text;
+          } else if (sticker) {
+            data = sticker.emoji;
+          } else {
+            data = "WIP";
+          }
+          const messageClass = isPrivateChat
+            ? isOutgoing
+              ? "private-message private-message_mine"
+              : "private-message private-message_not-mine"
+            : "";
+          return <div class={messageClass}>{data}</div>;
         }
-        return <li>{data}</li>;
-      })}
-    </ul>
+      )}
+    </div>
   );
 };
