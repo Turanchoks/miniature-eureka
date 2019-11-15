@@ -12,7 +12,8 @@ export let state = {
   isAuthorized: false,
   isCodeValid: true,
   countryCodeSelectValue: "",
-  countryCodeSelectOpen: false
+  countryCodeSelectOpen: false,
+  users: {}
 };
 
 export const setState = partialState => {
