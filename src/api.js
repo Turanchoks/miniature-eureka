@@ -1,22 +1,7 @@
-import { Airgram, Auth, prompt, toObject } from "@airgram/web";
-import assert from "assert";
 import { setLoading, setState, state as prevState } from "./state";
 import { normalize } from "./utils";
-
-const TELEGRAM_API_ID = process.env.TELEGRAM_API_ID;
-const TELEGRAM_API_HASH = process.env.TELEGRAM_API_HASH;
-
-assert(TELEGRAM_API_ID, "TELEGRAM_API_ID should be set");
-assert(TELEGRAM_API_HASH, "TELEGRAM_API_HASH should be set");
-
-export const apiClient = new Airgram({
-  apiId: TELEGRAM_API_ID,
-  apiHash: TELEGRAM_API_HASH
-});
-
-const needToDownloadSmallPhoto = item =>
-  !item.small.local.isDownloadingCompleted &&
-  !item.small.local.isDownloadingActive;
+import { apiClient, downloadFile } from "./apiClient";
+import { loadUsersByIds } from "./apiUsers";
 
 export async function loadChat(currentChat) {
   setState({
@@ -45,66 +30,14 @@ export async function loadChat(currentChat) {
     const userIds = [];
     for (const message of messages) {
       const { senderUserId } = message;
-      if (!userIds.includes[senderUserId]) {
+      if (senderUserId && !userIds.includes[senderUserId]) {
         userIds.push(senderUserId);
       }
     }
 
-    const usersList = await Promise.all(
-      userIds.map(userId =>
-        apiClient.api
-          .getUser({
-            userId
-          })
-          .then(({ response }) => response)
-      )
-    );
-
-    setState({
-      users: { ...prevState.users, ...normalize(usersList) }
-    });
-
-    await Promise.all(
-      usersList.map(({ profilePhoto }, index) => {
-        if (profilePhoto && needToDownloadSmallPhoto(profilePhoto)) {
-          return downloadFile(profilePhoto.small.id, index + 1);
-        }
-      })
-    );
-
-    const usersWithProfilePhoto = await Promise.all(
-      usersList.map(user => {
-        const { profilePhoto } = user;
-        if (!profilePhoto || !profilePhoto.small.id) {
-          return Promise.resolve(user);
-        }
-        return apiClient.api
-          .readFile({
-            fileId: profilePhoto.small.id
-          })
-          .then(({ response }) => {
-            const blob = response.data;
-            let profilePhotoSrc = "";
-            if (blob) {
-              profilePhotoSrc = URL.createObjectURL(blob);
-            }
-            return { ...user, profilePhotoSrc };
-          });
-      })
-    );
-
-    setState({
-      users: { ...prevState.users, ...normalize(usersWithProfilePhoto) }
-    });
+    loadUsersByIds(userIds);
   }
 }
-
-const downloadFile = (fileId, priority = 1) =>
-  apiClient.api.downloadFile({
-    fileId: fileId,
-    priority,
-    synchronous: true
-  });
 
 export async function initUpdateApiData() {
   const authorizationState = await apiClient.api
@@ -133,6 +66,19 @@ export async function initUpdateApiData() {
     );
 
     setState({ chats: chatsInfo });
+
+    const senderUserIds = [];
+    for (const chat of chatsInfo) {
+      const { lastMessage } = chat;
+      if (
+        lastMessage &&
+        lastMessage.senderUserId &&
+        !senderUserIds.includes[lastMessage.senderUserId]
+      ) {
+        senderUserIds.push(lastMessage.senderUserId);
+      }
+    }
+    loadUsersByIds(senderUserIds);
 
     if (chatsInfo.length > 0) {
       loadChat(chatsInfo[0]);
