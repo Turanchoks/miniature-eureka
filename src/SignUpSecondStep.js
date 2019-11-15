@@ -32,7 +32,7 @@ const submitCode = code => {
     });
 };
 
-export const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
+export const SignUpSecondStep = ({ code, phone, loading, isCodeValid, countryCodeSelectValue }) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up" id="second-step">
@@ -46,7 +46,7 @@ export const SignUpSecondStep = ({ code, phone, loading, isCodeValid }) => {
               src={TwoFactorSetupMonkeyIdle}
             />
           </div>
-          <h1 class="title">{phone}</h1>
+          <h1 class="title">{`${countryCodeSelectValue.diallingCode}${phone}`}</h1>
           <div class="subtitle">
             We have sent you SMS
             <br /> with the code.

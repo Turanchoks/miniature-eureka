@@ -1,12 +1,12 @@
-import { h } from "./superfine";
-import { setState, setLoading } from "./state";
-import { apiClient } from "./api";
-import logo from "../assets/logo.png";
-import { CountryCodeSelect } from "./country-code-select/CountryCodeSelect";
+import { h } from './superfine';
+import { setState, setLoading } from './state';
+import { apiClient } from './api';
+import logo from '../assets/logo.png';
+import { CountryCodeSelect } from './country-code-select/CountryCodeSelect';
 
-const handlePhoneChange = e => {
+const handlePhoneChange = (value, code) => {
   setState({
-    phone: e.target.value
+    phone: code ? value.substr(code.length + 1) : value,
   });
 };
 
@@ -14,12 +14,12 @@ const submitPhone = phoneNumber => {
   setLoading(true);
   apiClient.api
     .setAuthenticationPhoneNumber({
-      phoneNumber
+      phoneNumber,
     })
     .then(r => {
       setState({
         loading: false,
-        step: "check code"
+        step: 'check code',
       });
     })
     .catch(e => {
@@ -29,7 +29,7 @@ const submitPhone = phoneNumber => {
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked
+    keepSignedIn: e.target.checked,
   });
 };
 
@@ -48,14 +48,20 @@ export const SignUpFirstStep = state => {
 
         <div class="sign-up__form">
           <div id="main" class="form-element" />
-          {CountryCodeSelect({ state, classes: "form-element" })}
-          <div class="basic-input form-element prefix-input">
-            <span class="basic-input__prefix">
-              {countryCodeSelectValue.diallingCode || ""}
-            </span>
+          {CountryCodeSelect({ state, classes: 'form-element' })}
+          <div class="basic-input form-element">
             <input
-              value={phone}
-              oninput={handlePhoneChange}
+              value={
+                countryCodeSelectValue
+                  ? `${countryCodeSelectValue.diallingCode || ''} ${phone}`
+                  : phone
+              }
+              oninput={({ target }) =>
+                handlePhoneChange(
+                  target.value,
+                  countryCodeSelectValue.diallingCode
+                )
+              }
               type="text"
               required
             />

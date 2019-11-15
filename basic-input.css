@@ -11,7 +11,7 @@
 .basic-input__prefix {
   position: absolute;
   left: 14px;
-  top: 15.5px;
+  top: 14px;
   line-height: 24px;
   z-index: 11;
 }
@@ -60,17 +60,4 @@
 
 .basic-input.basic-input_error input ~ .basic-input__placeholder {
   color: #e53935;
-}
-
-.prefix-input input {
-  padding-left: 55px;
-}
-.prefix-input > .basic-input__placeholder {
-  z-index: 10;
-  left: 55px;
-}
-
-.prefix-input > .basic-input input:focus ~ .basic-input__placeholder,
-.prefix-input > .basic-input input:valid ~ .basic-input__placeholder {
-  left: 14px;
 }
