@@ -44,7 +44,7 @@ export async function initUpdateApiData() {
     await Promise.all(
       chatsInfo.map((chat, index) => {
         if (chat.photo && !chat.photo.small.local.isDownloadingCompleted) {
-          apiClient.api.downloadFile({
+          return apiClient.api.downloadFile({
             fileId: chat.photo.small.id,
             priority: index + 1,
             synchronous: true
@@ -55,8 +55,8 @@ export async function initUpdateApiData() {
 
     const chats = await Promise.all(
       chatsInfo.map(chat => {
-        if (!chat.photo) return chat;
-        apiClient.api
+        if (!chat.photo) return Promise.resolve(chat);
+        return apiClient.api
           .readFile({
             fileId: chat.photo.small.id
           })
