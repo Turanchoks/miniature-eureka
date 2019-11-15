@@ -13,6 +13,30 @@ export const apiClient = new Airgram({
   apiHash: TELEGRAM_API_HASH
 });
 
+export const loadChat = currentChat => {
+  setState({
+    currentChat
+  });
+
+  apiClient.api
+    .getChatHistory({
+      chatId: currentChat.id,
+      fromMessageId: currentChat.lastMessage.id,
+      offset: 0,
+      limit: 15
+    })
+    .then(({ response }) => {
+      if (response.messages && response.messages.length > 0) {
+        setState({
+          currentChat: {
+            ...currentChat,
+            messages: response.messages
+          }
+        });
+      }
+    });
+};
+
 export async function initUpdateApiData() {
   const authorizationState = await apiClient.api
     .getAuthorizationState()
@@ -40,6 +64,10 @@ export async function initUpdateApiData() {
     );
 
     setState({ chats: chatsInfo });
+
+    if (chatsInfo.length > 0) {
+      loadChat(chatsInfo[0]);
+    }
 
     await Promise.all(
       chatsInfo.map((chat, index) => {

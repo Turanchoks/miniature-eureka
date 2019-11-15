@@ -5,6 +5,7 @@ export let state = {
   phone: "",
   code: "",
   chats: [],
+  currentChat: {},
   keepSignedIn: false,
   step: "", // phone input | check code | chats
   loading: false,
