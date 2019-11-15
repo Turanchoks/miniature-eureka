@@ -1,4 +1,4 @@
-import { h, render } from "./superfine";
+import { h, render } from "./src/superfine";
 // const root = document.getElementById('root');
 // const data = [[123, 'fsdfsdf'], [4325, 'sdajfklasdf'], [432543, 'sdjfklasfd']];
 // const exampleTemplate = document.getElementById('tg-example');
