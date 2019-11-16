@@ -1,6 +1,6 @@
 import { h } from './superfine';
 import { setState, setLoading } from './state';
-import { apiClient } from './api';
+import { apiClient } from "./apiClient";
 import logo from '../assets/logo.png';
 import { CountryCodeSelect } from './country-code-select/CountryCodeSelect';
 
@@ -80,10 +80,12 @@ export const SignUpFirstStep = state => {
 
           <div class="buttonsWrapper form-element">
             <button
-              disabled={loading}
+              disabled={loading || !phone || !countryCodeSelectValue}
               type="button"
               onclick={() =>
-                submitPhone(`${countryCodeSelectValue.diallingCode}${phone}`)
+                submitPhone(
+                  `${countryCodeSelectValue.diallingCode || ''}${phone}`
+                )
               }
               class="btn blue"
             >

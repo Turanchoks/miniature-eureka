@@ -1,11 +1,11 @@
-import { setState, setLoading } from "./state";
-import { apiClient, initUpdateApiData } from "./api";
-import TwoFactorSetupMonkeyIdle from "./Monkey/TwoFactorSetupMonkeyIdle.tgs";
-import TwoFactorSetupMonkeyTracking from "./Monkey/TwoFactorSetupMonkeyTracking.tgs";
-import { h } from "./superfine";
+import { setState, setLoading } from './state';
+import { apiClient, initUpdateApiData } from './api';
+import TwoFactorSetupMonkeyIdle from './Monkey/TwoFactorSetupMonkeyIdle.tgs';
+import TwoFactorSetupMonkeyTracking from './Monkey/TwoFactorSetupMonkeyTracking.tgs';
+import { h } from './superfine';
 
 const valid = value => {
-  const player = document.querySelector("tgs-player");
+  const player = document.querySelector('tgs-player');
   const sts = !value;
   const monkey = sts ? TwoFactorSetupMonkeyIdle : TwoFactorSetupMonkeyTracking;
   player.load(monkey);
@@ -13,7 +13,7 @@ const valid = value => {
 
 const handleCodeChange = e => {
   setState({
-    code: e.target.value
+    code: e.target.value,
   });
 };
 
@@ -21,18 +21,24 @@ const submitCode = code => {
   setLoading(true);
   apiClient.api
     .checkAuthenticationCode({
-      code
+      code,
     })
     .then(r => {
       setState({
         loading: false,
-        step: "valid code"
+        step: 'valid code',
       });
       initUpdateApiData();
     });
 };
 
-export const SignUpSecondStep = ({ code, phone, loading, isCodeValid, countryCodeSelectValue }) => {
+export const SignUpSecondStep = ({
+  code,
+  phone,
+  loading,
+  isCodeValid,
+  countryCodeSelectValue,
+}) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up" id="second-step">
@@ -46,7 +52,8 @@ export const SignUpSecondStep = ({ code, phone, loading, isCodeValid, countryCod
               src={TwoFactorSetupMonkeyIdle}
             />
           </div>
-          <h1 class="title">{`${countryCodeSelectValue.diallingCode}${phone}`}</h1>
+          <h1 class="title">{`${countryCodeSelectValue.diallingCode ||
+            ''}${phone}`}</h1>
           <div class="subtitle">
             We have sent you SMS
             <br /> with the code.
