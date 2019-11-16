@@ -17,8 +17,8 @@ export const Chats = ({ chats, currentChat, users }) => {
             let lastMessageSender;
             let lastMessageSenderStatus;
             const { lastMessage } = chat;
-            if (lastMessage && lastMessage.sender_user_id) {
-              lastMessageSender = users[lastMessage.sender_user_id];
+            if (lastMessage && lastMessage.senderUserId) {
+              lastMessageSender = users[lastMessage.senderUserId];
             }
             if (lastMessageSender) {
               lastMessageSenderStatus = lastMessageSender.status["@type"];
@@ -124,9 +124,9 @@ const ChatMessages = ({ messages, type }, users) => {
           {
             content: { text, caption, sticker, photo },
             date,
-            is_outgoing,
-            is_channel_post,
-            sender_user_id
+            isOutgoing,
+            isChannelPost,
+            senderUserId
           },
           index
         ) => {
@@ -142,27 +142,25 @@ const ChatMessages = ({ messages, type }, users) => {
           } else {
             data = "WIP";
           }
-          const messageWrapperClass = is_outgoing
-            ? "message out"
-            : "message in";
+          const messageWrapperClass = isOutgoing ? "message out" : "message in";
 
-          const messageClass = is_outgoing ? "msg msg-out" : "msg msg-in";
+          const messageClass = isOutgoing ? "msg msg-out" : "msg msg-in";
 
-          const senderUser = sender_user_id && users[sender_user_id];
+          const senderUser = senderUserId && users[senderUserId];
 
           const nextElement = messages[index + 1];
           const isLast =
             !nextElement ||
-            (nextElement && nextElement.sender_user_id !== sender_user_id);
+            (nextElement && nextElement.senderUserId !== senderUserId);
           const lastClass = isLast ? "last" : "";
 
           const prevElement = messages[index - 1];
           const isFirst =
             !prevElement ||
-            (prevElement && prevElement.sender_user_id !== sender_user_id);
+            (prevElement && prevElement.senderUserId !== senderUserId);
           const firstClass = isFirst ? "first" : "";
 
-          const showFullMessage = !isPrivateChat && senderUser && !is_outgoing;
+          const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
 
           return (
             <div class={messageWrapperClass}>

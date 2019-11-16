@@ -82,10 +82,16 @@ tdWebClient.onUpdate = update => {
           break;
       }
     }
-    case "updateUser": {
-      // setState({ user: update.user, isAuthorized: true });
-      break;
-    }
+    // case "updateUser": {
+    //   // setState({ user: update.user, isAuthorized: true });
+    //   break;
+    // }
+    // case "updateChatPinnedMessage": {
+    //   loadChats();
+    // }
+    // case "updateUserStatus": {
+    //   // loadUsersByIds([update.user_id]);
+    // }
 
     default:
       break;
@@ -265,7 +271,10 @@ export async function loadChat(currentChat) {
     .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
 
   if (historyMessages && historyMessages.length > 0) {
-    const messages = [...historyMessages.reverse(), currentChat.lastMessage];
+    const messages = [
+      ...historyMessages.reverse(),
+      transformObjectKeysSnakeToCamel(currentChat.lastMessage)
+    ];
 
     setState({
       currentChat: {
