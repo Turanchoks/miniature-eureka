@@ -3,6 +3,8 @@ import { h } from "./superfine";
 import { loadChat } from "./apiClient";
 import { setState } from "./state";
 
+const NOT_ONLINE_STATUSES = ["userStatusOffline", "userStatusEmpty", undefined];
+
 export const Chats = ({ chats, currentChat, users }) => {
   if (chats.length === 0) {
     return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
@@ -19,13 +21,14 @@ export const Chats = ({ chats, currentChat, users }) => {
               lastMessageSender = users[lastMessage.sender_user_id];
             }
             if (lastMessageSender) {
-              lastMessageSenderStatus = lastMessageSender.status._;
+              lastMessageSenderStatus = lastMessageSender.status["@type"];
             }
             const chatClass = chat.id === currentChat.id ? "chat" : "chat";
-            const onlineClass =
-              lastMessageSenderStatus !== "userStatusOffline"
-                ? "chat__avatar_online"
-                : "";
+            const onlineClass = NOT_ONLINE_STATUSES.includes(
+              lastMessageSenderStatus
+            )
+              ? ""
+              : "chat__avatar_online";
             return (
               <div class={chatClass} onclick={() => loadChat(chat)}>
                 <div class={`chat__avatar ${onlineClass}`}>
@@ -113,7 +116,6 @@ export const Chats = ({ chats, currentChat, users }) => {
 };
 
 const ChatMessages = ({ messages, type }, users) => {
-  console.log("type", type);
   const isPrivateChat = type["@type"] === "chatTypePrivate";
   return (
     <div class="messages-list">
