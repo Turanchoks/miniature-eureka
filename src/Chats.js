@@ -17,8 +17,8 @@ export const Chats = ({ chats, currentChat, users }) => {
             let lastMessageSender;
             let lastMessageSenderStatus;
             const { lastMessage } = chat;
-            if (lastMessage && lastMessage.senderUserId) {
-              lastMessageSender = users[lastMessage.senderUserId];
+            if (lastMessage && lastMessage.sender_user_id) {
+              lastMessageSender = users[lastMessage.sender_user_id];
             }
             if (lastMessageSender) {
               lastMessageSenderStatus = lastMessageSender.status["@type"];
@@ -51,9 +51,9 @@ export const Chats = ({ chats, currentChat, users }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
-                      {lastMessageSender && lastMessageSender.first_name ? (
+                      {lastMessageSender && lastMessageSender.firstName ? (
                         <span class="chat__last-message_from">
-                          {lastMessageSender.first_name}:{" "}
+                          {lastMessageSender.firstName}:{" "}
                         </span>
                       ) : (
                         ""
