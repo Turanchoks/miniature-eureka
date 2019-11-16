@@ -2,19 +2,6 @@
 # yarn lockfile v1
 
 
-"@airgram/core@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@airgram/core/-/core-2.1.1.tgz#978ce239ba47745a9804caabc15612d5a1c6ecbd"
-  integrity sha512-bYGTrXfxDOV4liwuS5W2hQ99Tv0UqJ6EcSP1Tgq7u1MnyiwYr4d8t4+kGBWSrHKE7kXoJ+SxeV/CuwVECAcV3A==
-
-"@airgram/web@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@airgram/web/-/web-2.1.1.tgz#4abb2ba6fe3e37799f8eab2ad00732a4321cf14a"
-  integrity sha512-Z+F/XGm644oVNM10dJaQ3i7SAKjPMFhLw7Jns6QTY5TKVjwoHxTpphkuwDYNV9brKNWB2aPgpJmU6BN7kuWuZw==
-  dependencies:
-    "@airgram/core" "^2.1.1"
-    tdweb "~1.5.0"
-
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
@@ -5343,7 +5330,7 @@ tar@^4:
     safe-buffer "^5.1.2"
     yallist "^3.0.3"
 
-tdweb@~1.5.0:
+tdweb@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/tdweb/-/tdweb-1.5.0.tgz#aad4deba24b4d23749aa1d16159009b40890ce48"
   integrity sha512-WHLONE4LK4Sb9XZdFJCQLkGl1o0Ka28d9YNL0aSQFA6xdXYbLMLUcDExKIvQZ62xUTnpbZtYilJLItrmL3Bv/A==

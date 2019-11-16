@@ -1,6 +1,6 @@
 import { getDate, getLastMessageStr } from "./utils";
 import { h } from "./superfine";
-import { apiClient, loadChat } from "./api";
+import { loadChat } from "./apiClient";
 import { setState } from "./state";
 
 export const Chats = ({ chats, currentChat, users }) => {
@@ -21,11 +21,11 @@ export const Chats = ({ chats, currentChat, users }) => {
             if (lastMessageSender) {
               lastMessageSenderStatus = lastMessageSender.status._;
             }
-            const chatClass =
-              chat.id === currentChat.id ? "chat" : "chat";
-            const onlineClass = lastMessageSenderStatus !== "userStatusOffline"
-              ? "chat__avatar_online"
-              : "";
+            const chatClass = chat.id === currentChat.id ? "chat" : "chat";
+            const onlineClass =
+              lastMessageSenderStatus !== "userStatusOffline"
+                ? "chat__avatar_online"
+                : "";
             return (
               <div class={chatClass} onclick={() => loadChat(chat)}>
                 <div class={`chat__avatar ${onlineClass}`}>
@@ -48,10 +48,14 @@ export const Chats = ({ chats, currentChat, users }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
-                      {lastMessageSender && lastMessageSender.firstName
-                        ?  <span class="chat__last-message_from">{lastMessageSender.firstName}: </span>
-                        : ""}
-                      
+                      {lastMessageSender && lastMessageSender.firstName ? (
+                        <span class="chat__last-message_from">
+                          {lastMessageSender.firstName}:{" "}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+
                       {getLastMessageStr(chat.lastMessage.content)}
                     </div>
                     {chat.unreadCount > 0 ? (

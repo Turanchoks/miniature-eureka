@@ -1,35 +1,36 @@
-import { h } from './superfine';
-import { setState, setLoading } from './state';
+import { h } from "./superfine";
+import { setState, setLoading } from "./state";
 import { apiClient } from "./apiClient";
-import logo from '../assets/logo.png';
-import { CountryCodeSelect } from './country-code-select/CountryCodeSelect';
+import logo from "../assets/logo.png";
+import { CountryCodeSelect } from "./country-code-select/CountryCodeSelect";
 
 const handlePhoneChange = (value, code) => {
   setState({
-    phone: code ? value.substr(code.length + 1) : value,
+    phone: code ? value.substr(code.length + 1) : value
   });
 };
 
 const submitPhone = phoneNumber => {
   setLoading(true);
-  apiClient.api
-    .setAuthenticationPhoneNumber({
-      phoneNumber,
+  apiClient
+    .send({
+      "@type": "setAuthenticationPhoneNumber",
+      phone_number: phoneNumber
     })
-    .then(r => {
+    .then(result => {
       setState({
         loading: false,
-        step: 'check code',
+        step: "check code"
       });
     })
-    .catch(e => {
-      console.log(e);
+    .catch(error => {
+      console.log("submitPhone", error);
     });
 };
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked,
+    keepSignedIn: e.target.checked
   });
 };
 
@@ -48,12 +49,12 @@ export const SignUpFirstStep = state => {
 
         <div class="sign-up__form">
           <div id="main" class="form-element" />
-          {CountryCodeSelect({ state, classes: 'form-element' })}
+          {CountryCodeSelect({ state, classes: "form-element" })}
           <div class="basic-input form-element">
             <input
               value={
                 countryCodeSelectValue
-                  ? `${countryCodeSelectValue.diallingCode || ''} ${phone}`
+                  ? `${countryCodeSelectValue.diallingCode || ""} ${phone}`
                   : phone
               }
               oninput={({ target }) =>
@@ -84,7 +85,7 @@ export const SignUpFirstStep = state => {
               type="button"
               onclick={() =>
                 submitPhone(
-                  `${countryCodeSelectValue.diallingCode || ''}${phone}`
+                  `${countryCodeSelectValue.diallingCode || ""}${phone}`
                 )
               }
               class="btn blue"

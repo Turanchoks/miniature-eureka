@@ -16,7 +16,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
-    "@airgram/web": "^2.1.1"
+    "tdweb": "^1.5.0"
   },
   "eslintConfig": {
     "parser": "babel-eslint",

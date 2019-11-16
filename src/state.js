@@ -13,7 +13,8 @@ export let state = {
   isCodeValid: true,
   countryCodeSelectValue: "",
   countryCodeSelectOpen: false,
-  users: {}
+  users: {},
+  userMe: {}
 };
 
 export const setState = partialState => {
