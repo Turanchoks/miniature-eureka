@@ -6,9 +6,9 @@ const EMPTY_OBJ = {};
 const EMPTY_ARR = [];
 
 const patchProperty = (node, key, prevValue, nextValue, isSvg) => {
-  if (key === "key" || key === "ref") {
+  if (key === 'key' || key === 'ref') {
   } else if (!isSvg && key in node) {
-    node[key] = nextValue == null ? "" : nextValue;
+    node[key] = nextValue == null ? '' : nextValue;
   } else if (nextValue == null || nextValue === false) {
     node.removeAttribute(key);
   } else {
@@ -18,19 +18,19 @@ const patchProperty = (node, key, prevValue, nextValue, isSvg) => {
 
 const createNode = vnode => {
   const { name, props, children, type } = vnode;
-  const isSvg = name === "svg";
+  const isSvg = name === 'svg';
 
   let node;
   if (type === TEXT_NODE) {
     node = document.createTextNode(name);
   } else if (isSvg) {
-    node = document.createElementNS("http://www.w3.org/2000/svg", name);
+    node = document.createElementNS('http://www.w3.org/2000/svg', name);
   } else {
     node = document.createElement(name);
   }
 
   for (const prop in props) {
-    if (prop === "ref") {
+    if (prop === 'ref') {
       props[prop](node);
     } else {
       patchProperty(node, prop, null, props[prop], isSvg);
@@ -54,7 +54,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
   ) {
   } else if (
     // if it's a text node, update it's nodeValue
-    prevVNode !== null &&
+    prevVNode != null &&
     prevVNode.type === TEXT_NODE &&
     nextVNode.type === TEXT_NODE &&
     prevVNode.name !== nextVNode.name
@@ -81,7 +81,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
     let oldTail = prevVNode.children.length - 1;
     let newTail = nextVNode.children.length - 1;
 
-    isSvg = isSvg || nextVNode.name === "svg";
+    isSvg = isSvg || nextVNode.name === 'svg';
 
     const oldNewPropsKeys = new Set(
       Object.keys(prevVNode.props).concat(Object.keys(nextVNode.props))
@@ -89,7 +89,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
 
     for (const key of oldNewPropsKeys) {
       const prevValue =
-        key === "selected" || key === "value" || key === "checked"
+        key === 'selected' || key === 'value' || key === 'checked'
           ? node[key]
           : prevVNode.props[key];
 
@@ -258,7 +258,7 @@ const createVNode = (name, props, children, node, key, type) => {
     children,
     node,
     type,
-    key
+    key,
   };
 };
 
@@ -281,14 +281,11 @@ export const h = (component, props, ...rest) => {
 
     if (Array.isArray(vnode)) {
       rest.unshift(...vnode);
-    } else if (vnode !== false || vnode !== true || vnode != null) {
-      const child = typeof vnode === "object" ? vnode : createTextVNode(vnode);
+    } else if (vnode === false || vnode === true || vnode == null) {
+    } else {
+      const child = typeof vnode === 'object' ? vnode : createTextVNode(vnode);
       children.push(child);
     }
-  }
-
-  if (typeof component === "function") {
-    return component(props, children);
   }
 
   return createVNode(component, props, children, null, props.key);
