@@ -22,10 +22,13 @@ export const Chats = ({ chats, currentChat, users }) => {
               lastMessageSenderStatus = lastMessageSender.status._;
             }
             const chatClass =
-              chat.id === currentChat.id ? "chat chat_active" : "chat";
+              chat.id === currentChat.id ? "chat" : "chat";
+            const onlineClass = lastMessageSenderStatus !== "userStatusOffline"
+              ? "chat__avatar_online"
+              : "";
             return (
               <div class={chatClass} onclick={() => loadChat(chat)}>
-                <div class="chat__avatar chat__avatar_online">
+                <div class={`chat__avatar ${onlineClass}`}>
                   {chat.imgSrc ? (
                     <img src={chat.imgSrc} class="chat__img" />
                   ) : (
@@ -38,12 +41,6 @@ export const Chats = ({ chats, currentChat, users }) => {
                   <div class="chat__info_row">
                     <div class="chat__name">
                       <strong>{chat.title}</strong>
-                      <div>
-                        {lastMessageSender
-                          ? lastMessageSender.firstName || ""
-                          : ""}
-                      </div>
-                      <div>{lastMessageSenderStatus || ""}</div>
                     </div>
                     <div class="chat__meta">
                       {getDate(chat.lastMessage.date)}
@@ -51,6 +48,10 @@ export const Chats = ({ chats, currentChat, users }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
+                      {lastMessageSender && lastMessageSender.firstName
+                        ?  <span class="chat__last-message_from">{lastMessageSender.firstName}: </span>
+                        : ""}
+                      
                       {getLastMessageStr(chat.lastMessage.content)}
                     </div>
                     {chat.unreadCount > 0 ? (
