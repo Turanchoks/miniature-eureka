@@ -92,6 +92,21 @@ tdWebClient.onUpdate = update => {
     // case "updateUserStatus": {
     //   // loadUsersByIds([update.user_id]);
     // }
+    case "updateChatLastMessage": {
+      const { chat_id, last_message } = update;
+      if (
+        Object.keys(prevState.currentChat).length > 0 &&
+        chat_id === prevState.currentChat.id
+      ) {
+        loadChat(
+          {
+            ...prevState.currentChat,
+            lastMessage: last_message
+          },
+          true
+        );
+      }
+    }
 
     default:
       break;
@@ -255,10 +270,12 @@ export async function loadUsersByIds(userIds) {
   });
 }
 
-export async function loadChat(currentChat) {
-  setState({
-    currentChat
-  });
+export async function loadChat(currentChat, isUpdate = false) {
+  if (!isUpdate) {
+    setState({
+      currentChat
+    });
+  }
 
   const historyMessages = await apiClient
     .send({
