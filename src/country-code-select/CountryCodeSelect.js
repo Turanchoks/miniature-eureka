@@ -5,6 +5,26 @@ import { setState } from '../state';
 const app = document.getElementById('app');
 let selectRef;
 
+const countryOnClick = () =>
+  setState({
+    countryCodeSelectOpen: false,
+    countryCodeSelectValue: item,
+  });
+
+const Countries = (
+  <ul class="country-code-list">
+    {countries.map((item, i) => {
+      return (
+        <li key={i} class="country-code-list__option" onclick={countryOnClick}>
+          <span>{item.unicode}</span>
+          <span class="country-name">{item.name}</span>
+          <span class="dialling-code">{item.diallingCode}</span>
+        </li>
+      );
+    })}
+  </ul>
+);
+
 export const CountryCodeSelect = ({
   state: { countryCodeSelectValue: value, countryCodeSelectOpen: open },
   classes,
@@ -19,7 +39,6 @@ export const CountryCodeSelect = ({
     <div
       class={`country-code-container${classes ? ` ${classes}` : ''}`}
       ref={el => {
-        console.log(el);
         selectRef = el;
       }}
     >
@@ -42,26 +61,7 @@ export const CountryCodeSelect = ({
         </div>
         {open ? <span class="arrow up" /> : <span class="arrow down" />}
       </div>
-      <ul class={`country-code-list${open ? '' : ' hide'}`}>
-        {countries.map((item, i) => {
-          return (
-            <li
-              key={i}
-              class="country-code-list__option"
-              onclick={() =>
-                setState({
-                  countryCodeSelectOpen: false,
-                  countryCodeSelectValue: item,
-                })
-              }
-            >
-              <span>{item.unicode}</span>
-              <span class="country-name">{item.name}</span>
-              <span class="dialling-code">{item.diallingCode}</span>
-            </li>
-          );
-        })}
-      </ul>
+      {open ? Countries : null}
     </div>
   );
 };
