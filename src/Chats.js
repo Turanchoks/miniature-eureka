@@ -7,7 +7,14 @@ const NOT_ONLINE_STATUSES = ["userStatusOffline", "userStatusEmpty", undefined];
 
 export const Chats = ({ chats, currentChat, users }) => {
   if (chats.length === 0) {
-    return <div class="flex-wrapper flex-wrapper_center">Chats loading...</div>;
+    return <div class="flex-wrapper">
+        <div id="wrapper">
+          <aside id="left-sidebar" class="flex-wrapper flex-wrapper_center">
+            <div class="loader"></div>
+          </aside>
+          <main id="main"></main>
+        </div>
+      </div>;
   }
   return (
     <div class="flex-wrapper">
@@ -23,7 +30,7 @@ export const Chats = ({ chats, currentChat, users }) => {
             if (lastMessageSender) {
               lastMessageSenderStatus = lastMessageSender.status["@type"];
             }
-            const chatClass = chat.id === currentChat.id ? "chat" : "chat";
+            const chatClass = chat.id === currentChat.id ? "chat chat_active" : "chat";
             const onlineClass = NOT_ONLINE_STATUSES.includes(
               lastMessageSenderStatus
             )
@@ -108,7 +115,10 @@ export const Chats = ({ chats, currentChat, users }) => {
           )}
           {currentChat.messages
             ? ChatMessages(currentChat, users)
-            : "Loading..."}
+            : <div class="flex-wrapper flex-wrapper_center">
+                <div class="loader"></div>
+              </div>
+          }
         </main>
       </div>
     </div>
@@ -154,6 +164,8 @@ const ChatMessages = ({ messages, type }, users) => {
             (nextElement && nextElement.senderUserId !== senderUserId);
           const lastClass = isLast ? "last" : "";
 
+          const extraPaddedClass = isLast ? "message_padded" : "";
+
           const prevElement = messages[index - 1];
           const isFirst =
             !prevElement ||
@@ -163,7 +175,7 @@ const ChatMessages = ({ messages, type }, users) => {
           const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
 
           return (
-            <div class={messageWrapperClass}>
+            <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
                 <div class="msg-avatar">
                   {senderUser.profilePhotoSrc ? (

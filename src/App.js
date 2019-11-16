@@ -16,7 +16,9 @@ const ric = window.requestIdleCallback || (cb => setTimeout(cb, 0));
 
 const CheckingYourStatus = () => {
   return (
-    <div class="flex-wrapper flex-wrapper_center">Checking your status...</div>
+    <div class="flex-wrapper flex-wrapper_center">
+      <div class="loading"></div>
+    </div>
   );
 };
 

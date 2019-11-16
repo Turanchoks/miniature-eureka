@@ -15,8 +15,8 @@
   margin-bottom: 5px;
 }
 
-.msg.last {
-  margin-bottom: 5px;
+.message_padded {
+  margin-bottom: 10px;
 }
 
 .message.out {
