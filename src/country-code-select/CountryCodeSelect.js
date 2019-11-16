@@ -5,17 +5,20 @@ import { setState } from '../state';
 const app = document.getElementById('app');
 let selectRef;
 
-const countryOnClick = () =>
-  setState({
-    countryCodeSelectOpen: false,
-    countryCodeSelectValue: item,
-  });
-
 const Countries = (
   <ul class="country-code-list">
     {countries.map((item, i) => {
       return (
-        <li key={i} class="country-code-list__option" onclick={countryOnClick}>
+        <li
+          key={i}
+          class="country-code-list__option"
+          onclick={() =>
+            setState({
+              countryCodeSelectOpen: false,
+              countryCodeSelectValue: item,
+            })
+          }
+        >
           <span>{item.unicode}</span>
           <span class="country-name">{item.name}</span>
           <span class="dialling-code">{item.diallingCode}</span>
@@ -25,16 +28,17 @@ const Countries = (
   </ul>
 );
 
+document.onclick = e => {
+  if (selectRef && selectRef.contains(e.target)) return;
+  setState({
+    countryCodeSelectOpen: false,
+  });
+};
+
 export const CountryCodeSelect = ({
   state: { countryCodeSelectValue: value, countryCodeSelectOpen: open },
   classes,
 }) => {
-  document.onclick = e => {
-    if (selectRef && selectRef.contains(e.target)) return;
-    setState({
-      countryCodeSelectOpen: false,
-    });
-  };
   return (
     <div
       class={`country-code-container${classes ? ` ${classes}` : ''}`}
@@ -61,7 +65,7 @@ export const CountryCodeSelect = ({
         </div>
         {open ? <span class="arrow up" /> : <span class="arrow down" />}
       </div>
-      {open ? Countries : <div />}
+      {open ? Countries : null}
     </div>
   );
 };
