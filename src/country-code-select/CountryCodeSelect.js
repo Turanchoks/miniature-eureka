@@ -61,7 +61,7 @@ export const CountryCodeSelect = ({
         </div>
         {open ? <span class="arrow up" /> : <span class="arrow down" />}
       </div>
-      {open ? Countries : null}
+      {open ? Countries : <div />}
     </div>
   );
 };
