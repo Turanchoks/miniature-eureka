@@ -1,5 +1,5 @@
 import { setState, setLoading } from "./state";
-import { apiClient, initUpdateApiData } from "./api";
+import { apiClient } from "./apiClient";
 import TwoFactorSetupMonkeyIdle from "./Monkey/TwoFactorSetupMonkeyIdle.tgs";
 import TwoFactorSetupMonkeyTracking from "./Monkey/TwoFactorSetupMonkeyTracking.tgs";
 import { h } from "./superfine";
