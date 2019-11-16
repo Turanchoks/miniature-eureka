@@ -26,7 +26,8 @@ export const getDate = date => {
 
 // TODO: handle all types of content
 export const getLastMessageStr = content => {
-  switch (content._) {
+  const type = content["@type"];
+  switch (type) {
     case "messageText":
       return content.text.text;
     case "messagePhoto":

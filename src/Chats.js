@@ -15,8 +15,8 @@ export const Chats = ({ chats, currentChat, users }) => {
             let lastMessageSender;
             let lastMessageSenderStatus;
             const { lastMessage } = chat;
-            if (lastMessage && lastMessage.senderUserId) {
-              lastMessageSender = users[lastMessage.senderUserId];
+            if (lastMessage && lastMessage.sender_user_id) {
+              lastMessageSender = users[lastMessage.sender_user_id];
             }
             if (lastMessageSender) {
               lastMessageSenderStatus = lastMessageSender.status._;
@@ -48,9 +48,9 @@ export const Chats = ({ chats, currentChat, users }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
-                      {lastMessageSender && lastMessageSender.firstName ? (
+                      {lastMessageSender && lastMessageSender.first_name ? (
                         <span class="chat__last-message_from">
-                          {lastMessageSender.firstName}:{" "}
+                          {lastMessageSender.first_name}:{" "}
                         </span>
                       ) : (
                         ""
@@ -113,7 +113,8 @@ export const Chats = ({ chats, currentChat, users }) => {
 };
 
 const ChatMessages = ({ messages, type }, users) => {
-  const isPrivateChat = type._ === "chatTypePrivate";
+  console.log("type", type);
+  const isPrivateChat = type["@type"] === "chatTypePrivate";
   return (
     <div class="messages-list">
       {messages.map(
@@ -121,9 +122,9 @@ const ChatMessages = ({ messages, type }, users) => {
           {
             content: { text, caption, sticker, photo },
             date,
-            isOutgoing,
-            isChannelPost,
-            senderUserId
+            is_outgoing,
+            is_channel_post,
+            sender_user_id
           },
           index
         ) => {
@@ -139,25 +140,27 @@ const ChatMessages = ({ messages, type }, users) => {
           } else {
             data = "WIP";
           }
-          const messageWrapperClass = isOutgoing ? "message out" : "message in";
+          const messageWrapperClass = is_outgoing
+            ? "message out"
+            : "message in";
 
-          const messageClass = isOutgoing ? "msg msg-out" : "msg msg-in";
+          const messageClass = is_outgoing ? "msg msg-out" : "msg msg-in";
 
-          const senderUser = senderUserId && users[senderUserId];
+          const senderUser = sender_user_id && users[sender_user_id];
 
           const nextElement = messages[index + 1];
           const isLast =
             !nextElement ||
-            (nextElement && nextElement.senderUserId !== senderUserId);
+            (nextElement && nextElement.sender_user_id !== sender_user_id);
           const lastClass = isLast ? "last" : "";
 
           const prevElement = messages[index - 1];
           const isFirst =
             !prevElement ||
-            (prevElement && prevElement.senderUserId !== senderUserId);
+            (prevElement && prevElement.sender_user_id !== sender_user_id);
           const firstClass = isFirst ? "first" : "";
 
-          const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
+          const showFullMessage = !isPrivateChat && senderUser && !is_outgoing;
 
           return (
             <div class={messageWrapperClass}>
@@ -176,7 +179,7 @@ const ChatMessages = ({ messages, type }, users) => {
               )}
               <div class={`${messageClass} ${lastClass} ${firstClass}`}>
                 {showFullMessage ? (
-                  <div class="msg-name">{senderUser.firstName} </div>
+                  <div class="msg-name">{senderUser.first_name} </div>
                 ) : (
                   ""
                 )}

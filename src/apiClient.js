@@ -50,26 +50,6 @@ const tdWebClient = new TdWebClient({
   api_hash: TELEGRAM_API_HASH
 });
 
-tdWebClient.send({
-  "@type": "setTdlibParameters",
-  parameters: {
-    "@type": "tdParameters",
-    use_test_dc: useTestDC,
-    api_id: TELEGRAM_API_ID,
-    api_hash: TELEGRAM_API_HASH,
-    system_language_code: "en",
-    device_model: getBrowser(),
-    system_version: getOSName(),
-    application_version: "0.1.0",
-    use_secret_chats: false,
-    use_message_database: true,
-    use_file_database: false,
-    database_directory: "/db",
-    files_directory: "/"
-  }
-});
-tdWebClient.send({ "@type": "checkDatabaseEncryptionKey" });
-
 const databaseExistsCheck = false;
 
 tdWebClient.onUpdate = update => {
@@ -113,6 +93,28 @@ tdWebClient.onUpdate = update => {
 };
 
 export const apiClient = tdWebClient;
+
+export function apiClientStart() {
+  tdWebClient.send({
+    "@type": "setTdlibParameters",
+    parameters: {
+      "@type": "tdParameters",
+      use_test_dc: useTestDC,
+      api_id: TELEGRAM_API_ID,
+      api_hash: TELEGRAM_API_HASH,
+      system_language_code: "en",
+      device_model: getBrowser(),
+      system_version: getOSName(),
+      application_version: "0.1.0",
+      use_secret_chats: false,
+      use_message_database: true,
+      use_file_database: false,
+      database_directory: "/db",
+      files_directory: "/"
+    }
+  });
+  tdWebClient.send({ "@type": "checkDatabaseEncryptionKey" });
+}
 
 export const downloadFile = (fileId, priority = 1) =>
   apiClient.send({
