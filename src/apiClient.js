@@ -191,7 +191,17 @@ async function loadChats() {
   loadUsersByIds(senderUserIds);
 
   if (chatsInfo.length > 0) {
-    loadChat(chatsInfo[0]);
+    const currentChatIdFromPath = getCurrentChatIdFromPath();
+    if (currentChatIdFromPath) {
+      const currentChatFromPath = chatsInfo.find(
+        ({ id }) => String(id) === currentChatIdFromPath
+      );
+      if (currentChatFromPath) {
+        loadChat(currentChatFromPath);
+      }
+    } else {
+      loadChat(chatsInfo[0]);
+    }
   }
 
   await Promise.all(
