@@ -1,4 +1,4 @@
-import { h } from './superfine';
+import { h } from './render';
 import { setState } from './state';
 
 let requireUpdate = false;

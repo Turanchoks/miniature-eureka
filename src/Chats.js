@@ -1,19 +1,27 @@
-import { getDate, getTimeSince, getContentSizeStr, getLastMessageStr, getFormattedText } from "./utils";
-import { h } from "./superfine";
-import { loadChat } from "./apiClient";
-import { setState } from "./state";
+import {
+  getDate,
+  getTimeSince,
+  getContentSizeStr,
+  getLastMessageStr,
+  getFormattedText,
+} from './utils';
+import { h } from './render';
+import { loadChat } from './apiClient';
+import { setState } from './state';
 import { push } from './router';
 
 export const Chats = ({ chats, currentChat, users, groups }) => {
   if (chats.length === 0) {
-    return <div class="flex-wrapper">
+    return (
+      <div class="flex-wrapper">
         <div id="wrapper">
           <aside id="left-sidebar" class="flex-wrapper flex-wrapper_center">
             <div class="loader"></div>
           </aside>
           <main id="main"></main>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   const { pathname } = location;
@@ -31,16 +39,20 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
   let currentChatGroup;
   let currentChatUserStatus;
 
-  if (currentChat.messages && currentChat.type["@type"] === "chatTypePrivate") {
+  if (currentChat.messages && currentChat.type['@type'] === 'chatTypePrivate') {
     currentChatUser = users[currentChat.type.user_id];
     if (currentChatUser) {
-      currentChatUserStatus = currentChatUser.status["@type"];
+      currentChatUserStatus = currentChatUser.status['@type'];
     }
   }
-  if (currentChat.messages
-    && ["chatTypeBasicGroup", "chatTypeSupergroup"].includes(currentChat.type["@type"])
+  if (
+    currentChat.messages &&
+    ['chatTypeBasicGroup', 'chatTypeSupergroup'].includes(
+      currentChat.type['@type']
+    )
   ) {
-    currentChatGroup = groups[currentChat.type.basic_group_id || currentChat.type.supergroup_id];
+    currentChatGroup =
+      groups[currentChat.type.basic_group_id || currentChat.type.supergroup_id];
   }
 
   return (
@@ -48,7 +60,7 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
       <div id="wrapper">
         <aside id="left-sidebar">
           {chats.map(chat => {
-            const isPrivateChat = chat.type["@type"] === "chatTypePrivate";
+            const isPrivateChat = chat.type['@type'] === 'chatTypePrivate';
 
             let lastMessageSender;
             let lastMessageSenderStatus;
@@ -57,18 +69,18 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
               lastMessageSender = users[lastMessage.sender_user_id];
             }
             if (lastMessageSender) {
-              lastMessageSenderStatus = lastMessageSender.status["@type"];
+              lastMessageSenderStatus = lastMessageSender.status['@type'];
             }
-            const chatClass = chat.id === currentChat.id ? "chat chat_active" : "chat";
+            const chatClass =
+              chat.id === currentChat.id ? 'chat chat_active' : 'chat';
 
-            const isOnline = isPrivateChat
-              && chat.type
-              && users[chat.type.user_id]
-              && users[chat.type.user_id].status["@type"] === "userStatusOnline";
+            const isOnline =
+              isPrivateChat &&
+              chat.type &&
+              users[chat.type.user_id] &&
+              users[chat.type.user_id].status['@type'] === 'userStatusOnline';
 
-            const onlineClass = isOnline
-              ? "chat__avatar_online"
-              : "";
+            const onlineClass = isOnline ? 'chat__avatar_online' : '';
 
             return (
               <div
@@ -98,14 +110,15 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
-                      {lastMessageSender
-                        && !lastMessage.is_outgoing
-                        && lastMessageSender.firstName 
-                        ? <span class="chat__last-message_from">
-                            {lastMessageSender.firstName}:{" "}
-                          </span>
-                        : ""
-                      }
+                      {lastMessageSender &&
+                      !lastMessage.is_outgoing &&
+                      lastMessageSender.firstName ? (
+                        <span class="chat__last-message_from">
+                          {lastMessageSender.firstName}:{' '}
+                        </span>
+                      ) : (
+                        ''
+                      )}
 
                       {getLastMessageStr(chat.lastMessage.content)}
                     </div>
@@ -113,14 +126,14 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                       <div
                         class={`chat__badge ${
                           chat.unreadMentionCount > 0
-                            ? "chat__badge_unread"
-                            : ""
+                            ? 'chat__badge_unread'
+                            : ''
                         }`}
                       >
                         {chat.unreadCount}
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
                   </div>
                 </div>
@@ -147,36 +160,42 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                   </div>
                 </div>
                 <div class="chat__info_row condensed">
-                  {UserStatus(currentChatUserStatus, currentChatUser, currentChatGroup)}
+                  {UserStatus(
+                    currentChatUserStatus,
+                    currentChatUser,
+                    currentChatGroup
+                  )}
                 </div>
               </div>
             </header>
           ) : (
-            ""
+            ''
           )}
-          {currentChat.messages
-            ? ChatMessages(currentChat, users)
-            : <div class="flex-wrapper flex-wrapper_center">
-                <div class="loader"></div>
-              </div>
-          }
+          {currentChat.messages ? (
+            ChatMessages(currentChat, users)
+          ) : (
+            <div class="flex-wrapper flex-wrapper_center">
+              <div class="loader"></div>
+            </div>
+          )}
         </main>
       </div>
     </div>
   );
 };
 
-
 const UserStatus = (status, user, group) => {
-  if (user && user.type['@type'] === "userTypeBot") {
+  if (user && user.type['@type'] === 'userTypeBot') {
     return <div class="chat__status">bot</div>;
   }
 
   if (group && group.memberCount) {
-    return <div class="chat__status">
-      {group.memberCount}
-      {group.isChannel ? ' subscribers' : ' members'}
-    </div>;
+    return (
+      <div class="chat__status">
+        {group.memberCount}
+        {group.isChannel ? ' subscribers' : ' members'}
+      </div>
+    );
   }
 
   if (user && user.isSupport) {
@@ -184,75 +203,69 @@ const UserStatus = (status, user, group) => {
   }
 
   switch (status) {
-    case "userStatusOnline":
+    case 'userStatusOnline':
       return <div class="chat__status chat__status_online">online</div>;
-    case "userStatusOffline":
-      return <div class="chat__status">
-        {user.status.was_online
-          ? `last seen ${getTimeSince(user.status.was_online)}`
-          : ''
-        }
-      </div>;
-    case "userStatusRecently":
-        return <div class="chat__status">last seen recently</div>;
+    case 'userStatusOffline':
+      return (
+        <div class="chat__status">
+          {user.status.was_online
+            ? `last seen ${getTimeSince(user.status.was_online)}`
+            : ''}
+        </div>
+      );
+    case 'userStatusRecently':
+      return <div class="chat__status">last seen recently</div>;
     default:
       return '';
   }
-}
+};
 
-const getMessageBody = (content) => {
+const getMessageBody = content => {
   const messageType = content['@type'];
-  
-  switch(messageType) {
-    case "messageText":
+
+  switch (messageType) {
+    case 'messageText':
       if (content.text.entities && content.text.entities.length) {
         return getFormattedText(content);
       }
       return <span>{content.text.text}</span>;
-    case "messageDocument": 
+    case 'messageDocument':
       const extension = content.document.file_name.split('.').pop();
-      return <div>
-        <div class="message-attachment">
-          <div
-            class="file-icon message-attachment-icon"
-            data-type={extension}
-          ></div>
-          <div class="message-attachment-info">
-            {content.document.file_name}
-            <div class="message-attachment-weight">
-              {getContentSizeStr(content.document.document.expected_size)}
+      return (
+        <div>
+          <div class="message-attachment">
+            <div
+              class="file-icon message-attachment-icon"
+              data-type={extension}
+            ></div>
+            <div class="message-attachment-info">
+              {content.document.file_name}
+              <div class="message-attachment-weight">
+                {getContentSizeStr(content.document.document.expected_size)}
+              </div>
             </div>
           </div>
+          {content.caption && content.caption.text ? (
+            <div class="message-caption">{content.caption.text}</div>
+          ) : (
+            ''
+          )}
         </div>
-        {content.caption && content.caption.text
-          ? <div class="message-caption">{content.caption.text}</div>
-          : ''
-        }
-      </div>;
-    default: 
+      );
+    default:
       return 'Wip';
   }
-}
+};
 
 const ChatMessages = ({ messages, type }, users) => {
-  const isPrivateChat = type["@type"] === "chatTypePrivate";
+  const isPrivateChat = type['@type'] === 'chatTypePrivate';
   return (
     <div class="messages-list">
       {messages.map(
-        (
-          {
-            content,
-            date,
-            isOutgoing,
-            isChannelPost,
-            senderUserId
-          },
-          index
-        ) => {
+        ({ content, date, isOutgoing, isChannelPost, senderUserId }, index) => {
+          const messageWrapperClass = isOutgoing ? 'message out' : 'message in';
 
-          const messageWrapperClass = isOutgoing ? "message out" : "message in";
-
-          const messageClass = isOutgoing ? "msg msg-out" : "msg msg-in";
+          const messageClass = isOutgoing ? 'msg msg-out' : 'msg msg-in';
 
           const senderUser = senderUserId && users[senderUserId];
 
@@ -260,15 +273,15 @@ const ChatMessages = ({ messages, type }, users) => {
           const isLast =
             !nextElement ||
             (nextElement && nextElement.senderUserId !== senderUserId);
-          const lastClass = isLast ? "last" : "";
+          const lastClass = isLast ? 'last' : '';
 
-          const extraPaddedClass = isLast ? "message_padded" : "";
+          const extraPaddedClass = isLast ? 'message_padded' : '';
 
           const prevElement = messages[index - 1];
           const isFirst =
             !prevElement ||
             (prevElement && prevElement.senderUserId !== senderUserId);
-          const firstClass = isFirst ? "first" : "";
+          const firstClass = isFirst ? 'first' : '';
 
           const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
 
@@ -285,13 +298,13 @@ const ChatMessages = ({ messages, type }, users) => {
                   )}
                 </div>
               ) : (
-                ""
+                ''
               )}
               <div class={`${messageClass} ${lastClass} ${firstClass}`}>
                 {showFullMessage ? (
                   <div class="msg-name">{senderUser.first_name} </div>
                 ) : (
-                  ""
+                  ''
                 )}
                 <div class="msg-text">
                   {getMessageBody(content)}

@@ -1,4 +1,4 @@
-import { h, render } from "./src/superfine";
+import { h, render } from './src/render';
 // const root = document.getElementById('root');
 // const data = [[123, 'fsdfsdf'], [4325, 'sdajfklasdf'], [432543, 'sdjfklasfd']];
 // const exampleTemplate = document.getElementById('tg-example');
@@ -35,7 +35,7 @@ const Link = ({ to, onclick, ...props }, children) => {
       onclick={e => {
         e.preventDefault();
         push(to);
-        if (typeof onclick === "function") {
+        if (typeof onclick === 'function') {
           onclick();
         }
       }}
@@ -45,8 +45,8 @@ const Link = ({ to, onclick, ...props }, children) => {
   );
 };
 
-const rootNode = document.getElementById("root");
-const rootForRouterNode = document.getElementById("root-for-router");
+const rootNode = document.getElementById('root');
+const rootForRouterNode = document.getElementById('root-for-router');
 render(
   rootNode,
   <div>

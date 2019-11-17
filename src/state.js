@@ -2,7 +2,7 @@ import { shallowEquals } from './utils';
 import { renderApp } from './renderApp';
 import { countries } from './country-code-select/countries';
 
-export let state = {
+let state = {
   phone: '',
   code: '',
   chats: [],
@@ -20,6 +20,8 @@ export let state = {
   userMe: {},
   countries,
 };
+
+export const getState = () => state;
 
 export const setState = partialState => {
   const nextState = {

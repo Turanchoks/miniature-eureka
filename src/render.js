@@ -7,6 +7,8 @@ const EMPTY_ARR = [];
 
 const patchProperty = (node, key, prevValue, nextValue, isSvg) => {
   if (key === 'key' || key === 'ref') {
+  } else if (key === 'innerHTML') {
+    node.innerHTML = nextValue;
   } else if (!isSvg && key in node) {
     node[key] = nextValue == null ? '' : nextValue;
   } else if (nextValue == null || nextValue === false) {

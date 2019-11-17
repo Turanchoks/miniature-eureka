@@ -1,4 +1,4 @@
-import { h, render } from '../superfine.js';
+import { h, render } from '../render.js';
 import { countries } from './countries.js';
 import { setState } from '../state';
 

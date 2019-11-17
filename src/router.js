@@ -1,4 +1,4 @@
-import { render } from './superfine';
+import { render } from './render';
 import { renderApp } from './renderApp';
 import { state } from './state';
 

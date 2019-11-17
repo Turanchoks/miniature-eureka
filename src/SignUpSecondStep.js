@@ -1,21 +1,21 @@
-import { setState, setLoading } from "./state";
-import { apiClient } from "./apiClient";
-import TwoFactorSetupMonkeyIdle from "./Monkey/TwoFactorSetupMonkeyIdle.tgs";
-import TwoFactorSetupMonkeyTracking from "./Monkey/TwoFactorSetupMonkeyTracking.tgs";
-import { h } from "./superfine";
+import { setState, setLoading } from './state';
+import { apiClient } from './apiClient';
+import TwoFactorSetupMonkeyIdle from './Monkey/TwoFactorSetupMonkeyIdle.tgs';
+import TwoFactorSetupMonkeyTracking from './Monkey/TwoFactorSetupMonkeyTracking.tgs';
+import { h } from './render';
 
 const onFocus = () => {
-  const player = document.querySelector("tgs-player");
+  const player = document.querySelector('tgs-player');
   player.load(TwoFactorSetupMonkeyTracking);
 };
 const onBlur = () => {
-  const player = document.querySelector("tgs-player");
+  const player = document.querySelector('tgs-player');
   player.load(TwoFactorSetupMonkeyIdle);
 };
 
 const handleCodeChange = e => {
   setState({
-    code: e.target.value
+    code: e.target.value,
   });
 };
 
@@ -23,13 +23,13 @@ const submitCode = code => {
   setLoading(true);
   apiClient
     .send({
-      "@type": "checkAuthenticationCode",
-      code: code
+      '@type': 'checkAuthenticationCode',
+      code: code,
     })
     .then(r => {
       setState({
         loading: false,
-        step: "valid code"
+        step: 'valid code',
       });
     });
 };
@@ -39,7 +39,7 @@ export const SignUpSecondStep = ({
   phone,
   loading,
   isCodeValid,
-  countryCodeSelectValue
+  countryCodeSelectValue,
 }) => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
