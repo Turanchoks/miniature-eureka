@@ -358,5 +358,10 @@ export async function loadChat(currentChat, isUpdate = false) {
     loadSuperGroupsByIds(superGroupsIds);
     loadBasicGroupsByIds(groupsIds);
     loadUsersByIds(userIds);
+
+    if (!isUpdate) {
+      // Scroll to bottom in messages list after chats loaded
+      setTimeout(() => document.querySelector('#main').scrollTop = 99999999, 0);
+    }
   }
 }
