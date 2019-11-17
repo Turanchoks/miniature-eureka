@@ -28,7 +28,7 @@ const submitCode = code => {
     })
     .then(r => {
       const state = getState();
-      if (state.step !== "waiting password") {
+      if (state.step !== "wait password") {
         setState({
           loading: false,
           step: 'valid code',
