@@ -1,4 +1,4 @@
-import { getDate, getTimeSince, getContentSizeStr, getLastMessageStr } from "./utils";
+import { getDate, getTimeSince, getContentSizeStr, getLastMessageStr, getFormattedText } from "./utils";
 import { h } from "./superfine";
 import { loadChat } from "./apiClient";
 import { setState } from "./state";
@@ -187,6 +187,9 @@ const getMessageBody = (content) => {
   
   switch(messageType) {
     case "messageText":
+      if (content.text.entities && content.text.entities.length) {
+        return getFormattedText(content);
+      }
       return <span>{content.text.text}</span>;
     case "messageDocument": 
       const extension = content.document.file_name.split('.').pop();
@@ -207,7 +210,7 @@ const getMessageBody = (content) => {
           ? <div class="message-caption">{content.caption.text}</div>
           : ''
         }
-      </div>
+      </div>;
     default: 
       return 'Wip';
   }
@@ -215,7 +218,6 @@ const getMessageBody = (content) => {
 
 const ChatMessages = ({ messages, type }, users) => {
   const isPrivateChat = type["@type"] === "chatTypePrivate";
-  console.log(messages);
   return (
     <div class="messages-list">
       {messages.map(
@@ -230,29 +232,6 @@ const ChatMessages = ({ messages, type }, users) => {
           index
         ) => {
 
-          // let data;
-          // const contentType = content['@type'];
-          
-          // switch (contentType) {
-          //   case "messageText":
-          //     console.log('case', content);
-          //     data = content.text.text;
-          //   case "messageDocument":
-          //     data = "Document";
-          //   default: 
-          //     data = "WIP Message type";
-          // }
-          // if (photo) {
-          //   data = "WIP: photo with caption ";
-          // } else if (text) {
-          //   data = text.text;
-          // } else if (caption) {
-          //   data = caption.text;
-          // } else if (sticker) {
-          //   data = sticker.emoji;
-          // } else {
-          //   data = "WIP";
-          // }
           const messageWrapperClass = isOutgoing ? "message out" : "message in";
 
           const messageClass = isOutgoing ? "msg msg-out" : "msg msg-in";

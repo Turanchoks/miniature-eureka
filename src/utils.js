@@ -78,9 +78,60 @@ export const getLastMessageStr = content => {
 export const getContentSizeStr = bytes => {
   const kb = bytes / 1000;
   if (kb < 1000) return kb.toFixed(2) + ' KB';
-  
   return (kb / 1000).toFixed(2) + '  MB';
 }
+
+export const getFormattedText = content => {
+  const formattedText = content.text.text;
+  const entities = [];
+  let i = 0;
+  content.text.entities.forEach(ent => {
+    entities.push(formattedText.substr(i, ent.offset - i));
+
+    let formatEnt = formattedText.substr(ent.offset, ent.length);
+    switch(ent.type['@type']) {
+      case "textEntityTypeTextUrl":
+      case "textEntityTypeUrl":
+        const url = ent.type.url || formatEnt;
+        formatEnt = `<a href="${url}">${formatEnt}</a>`;
+        break;
+      case "textEntityTypeBold":
+        formatEnt = `<strong>${formatEnt}</strong>`;
+        break;
+      case "textEntityTypeItalic":
+        formatEnt = `<em>${formatEnt}</em>`;
+        break;
+      case "textEntityTypePre":
+        formatEnt = `<pre>${formatEnt}</pre>`;
+        break;
+      case "textEntityTypePreCode":
+        formatEnt = `<pre><code>${formatEnt}</code></pre>`;
+        break;
+      case "textEntityTypeCode":
+        formatEnt = `<code>${formatEnt}</code>`;
+        break;
+
+      // TODO: make cutom handler for all link types
+      case "textEntityTypeMention":
+      case "textEntityTypeMentionName":
+      case "textEntityTypeBotCommand":
+      case "textEntityTypeCashtag":
+      case "textEntityTypeEmailAddress":
+      case "textEntityTypeHashtag": 
+      case "textEntityTypePhoneNumber":
+        formatEnt = `<a href="#">${formatEnt}</a>`;
+        break;
+      default:
+        break;
+    }
+    entities.push(formatEnt);
+
+    i = ent.offset + ent.length;
+  });
+
+  entities.push(formattedText.substr(i, formattedText.length));
+  return entities.join('');
+};
 
 export const normalize = list => {
   const obj = {};
