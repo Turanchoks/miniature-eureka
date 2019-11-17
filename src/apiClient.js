@@ -191,7 +191,7 @@ async function loadChats() {
   loadUsersByIds(senderUserIds);
 
   if (chatsInfo.length > 0) {
-    loadChat(getCurrentChatIdFromPath() || chatsInfo[0]);
+    loadChat(chatsInfo[0]);
   }
 
   await Promise.all(
@@ -309,20 +309,18 @@ export async function loadUsersByIds(userIds) {
   });
 }
 
-const CHATS_PATH = '/chats';
 const getCurrentChatIdFromPath = () => {
   const { pathname } = location;
-  return pathname.split(`${CHATS_PATH}/`)[1];
+  return pathname.split('/')[1];
 };
 
 export async function loadChat(currentChat, isUpdate = false) {
   const { pathname } = location;
   const pathChatId = getCurrentChatIdFromPath();
-  const pathnamehWithCurrentChatId = `${CHATS_PATH}/${currentChat.id}`;
   if (!pathChatId) {
-    window.history.replaceState({}, null, pathnamehWithCurrentChatId);
+    window.history.replaceState({}, null, currentChat.id);
   } else if (pathChatId !== String(currentChat.id)) {
-    push(pathnamehWithCurrentChatId);
+    push(currentChat.id);
   }
 
   if (!isUpdate) {
