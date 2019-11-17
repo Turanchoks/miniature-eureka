@@ -44,51 +44,35 @@ export const CountryCodeSelect = ({
         selectRef = el;
       }}
     >
-      <input
-        type="text"
-        name="code-search"
-        id="code-search"
-        class="code-search"
-        ref={el => {
-          inputRef = el;
-        }}
-        oninput={searchCountries}
-        onkeydown={e => {
-          if (e.keyCode === 13) {
-            if (inputRef) {
-              inputRef.value = '';
-              inputRef.blur();
-            }
+      <div class="basic-input">
+        <input
+          type="text"
+          name="code-search"
+          id="code-search"
+          placeholder="Country"
+          ref={el => {
+            inputRef = el;
+          }}
+          onfocus={() => {
             setState({
-              countryCodeSelectOpen: false,
-              countryCodeSelectValue: placeholder,
-              countries
+              countryCodeSelectOpen: true,
             });
-          }
-        }}
-      />
-      <div
-        class={
-          open
-            ? 'country-code-select country-code-select__open'
-            : 'country-code-select'
-        }
-        onclick={() => {
-          if (inputRef) inputRef.focus();
-          setState({
-            countryCodeSelectOpen: !open
-          });
-        }}
-      >
-        <div
-          class={
-            value
-              ? 'country-code-select__value'
-              : 'country-code-select__placeholder'
-          }
-        >
-          {value ? value.name : !!placeholder ? placeholder.name : 'Country'}
-        </div>
+          }}
+          oninput={searchCountries}
+          onkeydown={e => {
+            if (e.keyCode === 13) {
+              if (inputRef) {
+                inputRef.value = placeholder.name;
+                inputRef.blur();
+              }
+              setState({
+                countryCodeSelectOpen: false,
+                countryCodeSelectValue: placeholder,
+                countries
+              });
+            }
+          }}
+        />
         {open ? <span class="arrow up" /> : <span class="arrow down" />}
       </div>
       {open ? (
@@ -109,8 +93,7 @@ export const CountryCodeSelect = ({
                 }`}
                 onclick={() => {
                   if (inputRef) {
-                    inputRef.value = '';
-                    inputRef.blur();
+                    inputRef.value = item.name;
                   }
                   setState({
                     countryCodeSelectOpen: false,

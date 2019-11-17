@@ -47,7 +47,8 @@ export const SignUpFirstStep = state => {
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up">
         <div class="sign-up__heading">
-          <img class="logo" width="160" src={logo} />
+          <object class="logo" type="image/svg+xml" data={logo} width="160" height="160">
+          </object>
 
           <h1 class="title">Sign in to Telegram</h1>
           <div class="subtitle">
@@ -56,7 +57,7 @@ export const SignUpFirstStep = state => {
         </div>
 
         <div class="sign-up__form">
-          <div id="main" class="form-element" />
+          <div id="main" />
           {CountryCodeSelect({ state, classes: 'form-element' })}
           <div class="basic-input form-element">
             <input
@@ -87,7 +88,6 @@ export const SignUpFirstStep = state => {
             />
             <label for="keep-signed">Keep me signed in</label>
           </div>
-
           <div class="buttonsWrapper form-element">
             <button
               disabled={loading || !phone || !countryCodeSelectValue}

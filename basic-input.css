@@ -53,3 +53,14 @@
 .basic-input.basic-input_error input ~ .basic-input__placeholder {
   color: #e53935;
 }
+
+.base-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  box-shadow: none;
+}
+
+.basic-checkbox {
+  cursor: pointer;
+}
