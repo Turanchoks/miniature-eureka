@@ -291,7 +291,7 @@ const ChatMessages = ({ messages, type }, users, quoteMessages) => {
           }
           
           return (
-            <div key={id} class={`${messageWrapperClass} ${extraPaddedClass}`}>
+            <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
                 <div class="msg-avatar">
                   {senderUser.profilePhoto && !senderUser.profilePhotoSrc ? (

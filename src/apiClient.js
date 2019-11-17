@@ -325,15 +325,15 @@ const getCurrentChatIdFromPath = () => {
 };
 
 export async function loadChat(currentChat, isUpdate = false) {
-  const { pathname } = location;
-  const pathChatId = getCurrentChatIdFromPath();
-  if (!pathChatId) {
-    window.history.replaceState({}, null, currentChat.id);
-  } else if (pathChatId !== String(currentChat.id)) {
-    push(currentChat.id);
-  }
-
   if (!isUpdate) {
+    const { pathname } = location;
+    const pathChatId = getCurrentChatIdFromPath();
+    if (!pathChatId) {
+      window.history.replaceState({}, null, currentChat.id);
+    } else if (pathChatId !== String(currentChat.id)) {
+      push(currentChat.id);
+    }
+
     setState({
       currentChat
     });
