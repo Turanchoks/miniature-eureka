@@ -185,9 +185,9 @@ async function loadChats() {
   }
   loadUsersByIds(senderUserIds);
 
-  if (chatsInfo.length > 0) {
-    loadChat(chatsInfo[0]);
-  }
+  // if (chatsInfo.length > 0) {
+  //   loadChat(chatsInfo[0]);
+  // }
 
   await Promise.all(
     chatsInfo.map((chat, index) => {

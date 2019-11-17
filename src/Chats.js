@@ -2,6 +2,7 @@ import { getDate, getTimeSince, getContentSizeStr, getLastMessageStr, getFormatt
 import { h } from "./superfine";
 import { loadChat } from "./apiClient";
 import { setState } from "./state";
+import { push } from './router';
 
 export const Chats = ({ chats, currentChat, users, groups }) => {
   if (chats.length === 0) {
@@ -13,6 +14,17 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
           <main id="main"></main>
         </div>
       </div>;
+  }
+
+  const { pathname } = location;
+  if (pathname === '/') {
+    loadChat(chats[0]);
+    window.history.replaceState({}, null, chats[0].id);
+  } else {
+    const selectedChat = chats.find(({ id }) => id === +pathname.substr(1));
+    if (currentChat.id !== selectedChat.id) {
+      loadChat(selectedChat);
+    }
   }
 
   let currentChatUser;
@@ -59,7 +71,13 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
               : "";
 
             return (
-              <div class={chatClass} onclick={() => loadChat(chat)}>
+              <div
+                class={chatClass}
+                onclick={() => {
+                  push(chat.id);
+                  loadChat(chat);
+                }}
+              >
                 <div class={`chat__avatar ${onlineClass}`}>
                   {chat.imgSrc ? (
                     <img src={chat.imgSrc} class="chat__img" />
