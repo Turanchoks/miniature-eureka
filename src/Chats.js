@@ -9,7 +9,7 @@ import { h } from './render';
 import { loadChat } from './apiClient';
 import { setState } from './state';
 
-export const Chats = ({ chats, currentChat, users, groups }) => {
+export const Chats = ({ chats, currentChat, users, groups, quoteMessages }) => {
   if (chats.length === 0) {
     return (
       <div class="flex-wrapper">
@@ -165,7 +165,7 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
             ''
           )}
           {currentChat.messages ? (
-            ChatMessages(currentChat, users)
+            ChatMessages(currentChat, users, quoteMessages)
           ) : (
             <div class="flex-wrapper flex-wrapper_center">
               <div class="loader" />
@@ -245,13 +245,13 @@ const getMessageBody = content => {
   }
 };
 
-const ChatMessages = ({ messages, type }, users) => {
+const ChatMessages = ({ messages, type }, users, quoteMessages) => {
   const isPrivateChat = type['@type'] === 'chatTypePrivate';
   return (
     <div class="messages-list">
       {messages.map(
         (
-          { content, date, isOutgoing, isChannelPost, senderUserId, id },
+          { content, date, isOutgoing, isChannelPost, senderUserId, id, replyToMessageId },
           index
         ) => {
           const messageWrapperClass = isOutgoing ? 'message out' : 'message in';
@@ -279,6 +279,17 @@ const ChatMessages = ({ messages, type }, users) => {
           const formattedTextContent =
             content['@type'] === 'messageText' && getFormattedText(content);
 
+          let quoteMessage;
+          let quoteMessageFormattedTextContent;
+          let quoteMessageSender;
+          if (replyToMessageId && quoteMessages[replyToMessageId]) {
+            quoteMessage = quoteMessages[replyToMessageId];
+            quoteMessageFormattedTextContent = quoteMessage
+              && quoteMessage.content['@type'] === 'messageText'
+              && getFormattedText(quoteMessage.content);
+            quoteMessageSender = users[quoteMessage.senderUserId] || '';
+          }
+          
           return (
             <div key={id} class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
@@ -297,8 +308,21 @@ const ChatMessages = ({ messages, type }, users) => {
                 ''
               )}
               <div class={`${messageClass} ${lastClass} ${firstClass}`}>
+                {replyToMessageId && quoteMessage
+                  ? <div class="quote quote-out">
+                      <div class="msg-name">{quoteMessageSender.firstName}</div>
+                      <div class="msg-text">
+                      {quoteMessageFormattedTextContent ? (
+                        <div innerHTML={quoteMessageFormattedTextContent}></div>
+                      ) : (
+                        getMessageBody(quoteMessage.content)
+                      )}
+                      </div>
+                    </div>
+                  : ''
+                }
                 {showFullMessage ? (
-                  <div class="msg-name">{senderUser.first_name} </div>
+                  <div class="msg-name">{senderUser.firstName}</div>
                 ) : (
                   ''
                 )}

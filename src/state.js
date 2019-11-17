@@ -8,6 +8,7 @@ let state = {
   password: '',
   chats: [],
   currentChat: {},
+  quoteMessages: {},
   keepSignedIn: false,
   step: '', // phone input | check code | chats
   loading: false,

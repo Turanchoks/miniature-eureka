@@ -91,7 +91,7 @@ export const getFormattedText = content => {
   const formattedText = content.text.text;
   const entities = [];
   let i = 0;
-  if (!content.text.entities) return formattedText;
+  if (!content.text.entities && !content.text.entities.length) return formattedText;
 
   content.text.entities.forEach(ent => {
     entities.push(formattedText.substr(i, ent.offset - i));
@@ -210,3 +210,9 @@ export const transformObjectKeysSnakeToCamel = obj => {
   }
   return newObj;
 };
+
+export const arrayToObjectById = (array) =>
+array.reduce((obj, item) => {
+  obj[item.id] = item
+  return obj
+}, {});

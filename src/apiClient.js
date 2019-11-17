@@ -355,11 +355,27 @@ export async function loadChat(currentChat, isUpdate = false) {
       transformObjectKeysSnakeToCamel(currentChat.lastMessage)
     ];
 
+    const quoteMessages = await apiClient
+      .send({
+        '@type': 'getMessages',
+        chat_id: currentChat.id,
+        message_ids: historyMessages.reduce((res, message) => {
+          if (message.replyToMessageId !== 0) {
+            res.push(message.replyToMessageId);
+          }
+          return res;
+        }, []),
+      }).then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
+  
     setState({
       currentChat: {
         ...currentChat,
-        messages
-      }
+        messages,
+      },
+      quoteMessages: {
+        ...getState().quoteMessages,
+        ...normalize(quoteMessages),
+      },
     });
 
     const userIds = [];
