@@ -75,10 +75,15 @@
   height: 100%;
 }
 .msg-text {
+  white-space: pre-line;
+}
+
+.msg-text * {
   position: relative;
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
 .msg-time {
   font-size: 12px;
   display: inline-block;
