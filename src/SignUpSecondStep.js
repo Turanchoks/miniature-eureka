@@ -4,11 +4,13 @@ import TwoFactorSetupMonkeyIdle from "./Monkey/TwoFactorSetupMonkeyIdle.tgs";
 import TwoFactorSetupMonkeyTracking from "./Monkey/TwoFactorSetupMonkeyTracking.tgs";
 import { h } from "./superfine";
 
-const valid = value => {
+const onFocus = () => {
   const player = document.querySelector("tgs-player");
-  const sts = !value;
-  const monkey = sts ? TwoFactorSetupMonkeyIdle : TwoFactorSetupMonkeyTracking;
-  player.load(monkey);
+  player.load(TwoFactorSetupMonkeyTracking);
+};
+const onBlur = () => {
+  const player = document.querySelector("tgs-player");
+  player.load(TwoFactorSetupMonkeyIdle);
 };
 
 const handleCodeChange = e => {
@@ -67,6 +69,8 @@ export const SignUpSecondStep = ({
               required
               oninput={handleCodeChange}
               value={code}
+              onfocus={onFocus}
+              onblur={onBlur}
             />
             <span class="basic-input__placeholder">Code</span>
           </div>
