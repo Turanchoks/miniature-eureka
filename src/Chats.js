@@ -8,7 +8,6 @@ import {
 import { h } from './render';
 import { loadChat } from './apiClient';
 import { setState } from './state';
-import { push } from './router';
 
 export const Chats = ({ chats, currentChat, users, groups }) => {
   if (chats.length === 0) {
@@ -22,17 +21,6 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
         </div>
       </div>
     );
-  }
-
-  const { pathname } = location;
-  if (pathname === '/') {
-    loadChat(chats[0]);
-    window.history.replaceState({}, null, chats[0].id);
-  } else {
-    const selectedChat = chats.find(({ id }) => id === +pathname.substr(1));
-    if (currentChat.id !== selectedChat.id) {
-      loadChat(selectedChat);
-    }
   }
 
   let currentChatUser;
@@ -90,7 +78,6 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                   if (chat.id === currentChat.id) {
                     return;
                   }
-                  push(chat.id);
                   loadChat(chat);
                 }}
               >

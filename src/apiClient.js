@@ -7,6 +7,7 @@ import {
   normalize
 } from './utils';
 import { setState, getState } from './state';
+import { push } from './router';
 
 const TELEGRAM_API_ID = process.env.TELEGRAM_API_ID;
 const TELEGRAM_API_HASH = process.env.TELEGRAM_API_HASH;
@@ -189,9 +190,9 @@ async function loadChats() {
   }
   loadUsersByIds(senderUserIds);
 
-  // if (chatsInfo.length > 0) {
-  //   loadChat(chatsInfo[0]);
-  // }
+  if (chatsInfo.length > 0) {
+    loadChat(getCurrentChatIdFromPath() || chatsInfo[0]);
+  }
 
   await Promise.all(
     chatsInfo.map((chat, index) => {
@@ -308,7 +309,22 @@ export async function loadUsersByIds(userIds) {
   });
 }
 
+const CHATS_PATH = '/chats';
+const getCurrentChatIdFromPath = () => {
+  const { pathname } = location;
+  return pathname.split(`${CHATS_PATH}/`)[1];
+};
+
 export async function loadChat(currentChat, isUpdate = false) {
+  const { pathname } = location;
+  const pathChatId = getCurrentChatIdFromPath();
+  const pathnamehWithCurrentChatId = `${CHATS_PATH}/${currentChat.id}`;
+  if (!pathChatId) {
+    window.history.replaceState({}, null, pathnamehWithCurrentChatId);
+  } else if (pathChatId !== String(currentChat.id)) {
+    push(pathnamehWithCurrentChatId);
+  }
+
   if (!isUpdate) {
     setState({
       currentChat
