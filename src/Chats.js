@@ -1,11 +1,9 @@
-import { getDate, getLastMessageStr } from "./utils";
+import { getDate, getTimeSince, getLastMessageStr } from "./utils";
 import { h } from "./superfine";
 import { loadChat } from "./apiClient";
 import { setState } from "./state";
 
-const NOT_ONLINE_STATUSES = ["userStatusOffline", "userStatusEmpty", undefined];
-
-export const Chats = ({ chats, currentChat, users }) => {
+export const Chats = ({ chats, currentChat, users, groups }) => {
   if (chats.length === 0) {
     return <div class="flex-wrapper">
         <div id="wrapper">
@@ -16,11 +14,30 @@ export const Chats = ({ chats, currentChat, users }) => {
         </div>
       </div>;
   }
+
+  let currentChatUser;
+  let currentChatGroup;
+  let currentChatUserStatus;
+
+  if (currentChat.messages && currentChat.type["@type"] === "chatTypePrivate") {
+    currentChatUser = users[currentChat.type.user_id];
+    if (currentChatUser) {
+      currentChatUserStatus = currentChatUser.status["@type"];
+    }
+  }
+  if (currentChat.messages
+    && ["chatTypeBasicGroup", "chatTypeSupergroup"].includes(currentChat.type["@type"])
+  ) {
+    currentChatGroup = groups[currentChat.type.basic_group_id || currentChat.type.supergroup_id];
+  }
+
   return (
     <div class="flex-wrapper">
       <div id="wrapper">
         <aside id="left-sidebar">
           {chats.map(chat => {
+            const isPrivateChat = chat.type["@type"] === "chatTypePrivate";
+
             let lastMessageSender;
             let lastMessageSenderStatus;
             const { lastMessage } = chat;
@@ -31,11 +48,12 @@ export const Chats = ({ chats, currentChat, users }) => {
               lastMessageSenderStatus = lastMessageSender.status["@type"];
             }
             const chatClass = chat.id === currentChat.id ? "chat chat_active" : "chat";
-            const onlineClass = NOT_ONLINE_STATUSES.includes(
-              lastMessageSenderStatus
-            )
-              ? ""
-              : "chat__avatar_online";
+            const isOnline = lastMessageSenderStatus === "userStatusOnline";
+
+            const onlineClass = isPrivateChat && isOnline
+              ? "chat__avatar_online"
+              : "";
+
             return (
               <div class={chatClass} onclick={() => loadChat(chat)}>
                 <div class={`chat__avatar ${onlineClass}`}>
@@ -106,7 +124,7 @@ export const Chats = ({ chats, currentChat, users }) => {
                   </div>
                 </div>
                 <div class="chat__info_row condensed">
-                  <div class="chat__status">online</div>
+                  {UserStatus(currentChatUserStatus, currentChatUser, currentChatGroup)}
                 </div>
               </div>
             </header>
@@ -124,6 +142,40 @@ export const Chats = ({ chats, currentChat, users }) => {
     </div>
   );
 };
+
+
+const UserStatus = (status, user, group) => {
+  if (user && user.type['@type'] === "userTypeBot") {
+    return <div class="chat__status">bot</div>;
+  }
+
+  if (group && group.memberCount) {
+    return <div class="chat__status">
+      {group.memberCount}
+      {group.isChannel ? ' subscribers' : ' members'}
+    </div>;
+  }
+
+  if (user && user.isSupport) {
+    return <div class="chat__status">service notifications</div>;
+  }
+
+  switch (status) {
+    case "userStatusOnline":
+      return <div class="chat__status chat__status_online">online</div>;
+    case "userStatusOffline":
+      return <div class="chat__status">
+        {user.status.was_online
+          ? `last seen ${getTimeSince(user.status.was_online)}`
+          : ''
+        }
+      </div>;
+    case "userStatusRecently":
+        return <div class="chat__status">last seen recently</div>;
+    default:
+      return '';
+  }
+}
 
 const ChatMessages = ({ messages, type }, users) => {
   const isPrivateChat = type["@type"] === "chatTypePrivate";

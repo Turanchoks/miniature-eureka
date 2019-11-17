@@ -1,8 +1,3 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-}
-
 body * {
   transition: background-color linear .2s;
 }
@@ -104,6 +99,11 @@ body * {
 }
 
 .chat__status {
+  color: #737373;
+  font-size: 14px;
+}
+
+.chat__status_online {
   color: #3692ED;
 }
 
@@ -191,7 +191,7 @@ body * {
   border-radius: 50%;
   width: 52px;
   height: 52px;
-  animation: spin 1s linear infinite;
+  animation: spin .66s linear infinite;
 }
 
 @keyframes spin {

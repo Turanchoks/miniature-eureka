@@ -14,6 +14,7 @@ export let state = {
   countryCodeSelectValue: "",
   countryCodeSelectOpen: false,
   users: {},
+  groups: {},
   userMe: {}
 };
 

@@ -219,6 +219,40 @@ async function loadChats() {
   setState({ chats });
 }
 
+export async function loadBasicGroupsByIds(groupsIds) {
+  const groupsList = await Promise.all(
+    groupsIds.map(groupId =>
+      apiClient
+        .send({
+          "@type": "getBasicGroup",
+          basic_group_id: groupId
+        })
+        .then(transformObjectKeysSnakeToCamel)
+    )
+  );
+
+  setState({
+    groups: { ...prevState.groups, ...normalize(groupsList) }
+  });
+}
+
+export async function loadSuperGroupsByIds(superGroupsIds) {
+  const superGroupsList = await Promise.all(
+    superGroupsIds.map(groupId =>
+      apiClient
+        .send({
+          "@type": "getSupergroup",
+          supergroup_id: groupId
+        })
+        .then(transformObjectKeysSnakeToCamel)
+    )
+  );
+
+  setState({
+    groups: { ...prevState.groups, ...normalize(superGroupsList) }
+  });
+}
+
 export async function loadUsersByIds(userIds) {
   const usersList = await Promise.all(
     userIds.map(userId =>
@@ -308,6 +342,21 @@ export async function loadChat(currentChat, isUpdate = false) {
       }
     }
 
+
+    const groupsIds = [];
+    if (currentChat.type && currentChat.type['@type'] === "chatTypeBasicGroup") {
+      groupsIds.push(currentChat.type.basic_group_id);
+    }
+
+
+    const superGroupsIds = [];
+    if (currentChat.type && currentChat.type['@type'] === "chatTypeSupergroup") {
+      superGroupsIds.push(currentChat.type.supergroup_id);
+    }
+
+
+    loadSuperGroupsByIds(superGroupsIds);
+    loadBasicGroupsByIds(groupsIds);
     loadUsersByIds(userIds);
   }
 }

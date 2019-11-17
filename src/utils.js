@@ -15,14 +15,48 @@ export const shallowEquals = (obj1, obj2) => {
   return true;
 };
 
-// TODO: check if not today, show short day of week
-// if not current week, show m/dd/yy
+const isToday = (date) => {
+  const today = new Date();
+  return date.setHours(0,0,0,0) === today.setHours(0,0,0,0);
+}
+
+const lessThanWeekAgo = (jsDate) => {
+  const today = new Date();
+  return today.getDate() - jsDate.getDate() <= 7;
+}
+
 export const getDate = date => {
   const jsDate = new Date(date * 1000);
   const hours = jsDate.getHours().toString();
   const minutes = jsDate.getMinutes().toString();
-  return `${hours}:${minutes.padStart(2, 0)}`;
+  if (isToday(jsDate)) {
+    return `${hours}:${minutes.padStart(2, 0)}`;
+  } else if (lessThanWeekAgo(jsDate)) {
+    return jsDate.toLocaleString('en-us', { weekday:'short' })
+  } else {
+    return jsDate.toLocaleDateString('en-us');
+  }
 };
+
+export const getTimeSince = (date) => {
+  const seconds = Math.floor(((new Date().getTime() / 1000) - date));
+  
+  let  interval = Math.floor(seconds / 31536000);
+  interval = Math.floor(seconds / 2592000);
+
+  interval = Math.floor(seconds / 86400);
+  if (interval === 1) return interval + " day ago";
+  if (interval > 1) return interval + " days ago";
+
+  interval = Math.floor(seconds / 3600);
+  if (interval === 1) return interval + " hour ago";
+  if (interval > 1) return interval + " hours ago";
+
+  interval = Math.floor(seconds / 60);
+  if (interval > 1) return interval + " minutes ago";
+
+  return Math.floor(seconds) + " seconds ago";
+}
 
 // TODO: handle all types of content
 export const getLastMessageStr = content => {
@@ -30,6 +64,10 @@ export const getLastMessageStr = content => {
   switch (type) {
     case "messageText":
       return content.text.text;
+    case "messageSticker":
+      return "Sticker";
+    case "messageDocument":
+      return "Document";
     case "messagePhoto":
       return "Photo";
     default:
