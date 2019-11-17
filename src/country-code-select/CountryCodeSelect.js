@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 import { h, render } from '../superfine.js';
 import { countries } from './countries.js';
 import { setState } from '../state';
@@ -8,21 +7,14 @@ let selectRef;
 let inputRef;
 let listRef;
 
-var options = {
-  shouldSort: true,
-  threshold: 0.6,
-  location: 0,
-  distance: 100,
-  maxPatternLength: 32,
-  minMatchCharLength: 1,
-  keys: ['name', 'diallingCode'],
-};
-var fuse = new Fuse(countries, options);
-
 const searchCountries = e => {
   const { value } = e.target;
   if (listRef) listRef.scrollTop = 0;
-  const searchResult = !!value ? fuse.search(value) : countries;
+  const searchResult = !!value
+    ? countries.filter(({ name }) =>
+        name.toLowerCase().includes(value.toLowerCase())
+      )
+    : countries;
   setState({
     countries: searchResult,
     countryCodeSelectPlaceholder: searchResult[0] ? searchResult[0] : '',

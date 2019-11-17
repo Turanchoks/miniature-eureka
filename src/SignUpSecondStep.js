@@ -54,8 +54,7 @@ export const SignUpSecondStep = ({
               src={TwoFactorSetupMonkeyIdle}
             />
           </div>
-          <h1 class="title">{`${countryCodeSelectValue.diallingCode ||
-            ""}${phone}`}</h1>
+          <h1 class="title">{phone}</h1>
           <div class="subtitle">
             We have sent you SMS
             <br /> with the code.
