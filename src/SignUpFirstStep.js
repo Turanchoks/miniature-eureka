@@ -1,12 +1,12 @@
 import { h } from './render';
 import { setState, setLoading } from './state';
 import { apiClient } from './apiClient';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.svg';
 import { CountryCodeSelect } from './country-code-select/CountryCodeSelect';
 
 const handlePhoneChange = (value, code) => {
   setState({
-    phone: code ? value.substr(code.length + 1) : value,
+    phone: code ? value.substr(code.length + 1) : value
   });
 };
 
@@ -15,12 +15,12 @@ const submitPhone = phoneNumber => {
   apiClient
     .send({
       '@type': 'setAuthenticationPhoneNumber',
-      phone_number: phoneNumber,
+      phone_number: phoneNumber
     })
     .then(result => {
       setState({
         loading: false,
-        step: 'check code',
+        step: 'check code'
       });
     })
     .catch(error => {
@@ -30,7 +30,7 @@ const submitPhone = phoneNumber => {
 
 const handleKeepSignedInChange = e => {
   setState({
-    keepSignedIn: e.target.checked,
+    keepSignedIn: e.target.checked
   });
 };
 
@@ -48,6 +48,7 @@ export const SignUpFirstStep = state => {
       <div class="sign-up">
         <div class="sign-up__heading">
           <img class="logo" width="160" src={logo} />
+
           <h1 class="title">Sign in to Telegram</h1>
           <div class="subtitle">
             Please confirm your country code and <br /> enter your phone number

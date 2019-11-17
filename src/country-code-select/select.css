@@ -86,6 +86,7 @@
 .chevron-down {
   width: 24px;
   height: 24px;
+  background: #4ea4f6;
 }
 .chevron-down > svg {
   width: 24px;
