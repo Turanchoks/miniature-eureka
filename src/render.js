@@ -75,7 +75,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
       parent.removeChild(prevVNode.node);
     }
   } else {
-    let oldVKid, oldKey, newKey;
+    let oldVKid, oldKey, newKey, tmpVKid;
 
     let oldHead = 0;
     let newHead = 0;
@@ -160,22 +160,19 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
       }
     } else {
       const keyed = {};
-      const newKeyed = new Set();
-
-      for (let key = oldHead; key <= oldTail; key++) {
-        oldKey = prevVNode.children[key].key;
-        if (oldKey != null) {
-          keyed[oldKey] = prevVNode.children[key];
+      const newKeyed = {};
+      for (let i = oldHead; i <= oldTail; i++) {
+        if ((oldKey = prevVNode.children[i].key) != null) {
+          keyed[oldKey] = prevVNode.children[i];
         }
       }
 
       while (newHead <= newTail) {
-        oldVKid = prevVNode.children[oldHead];
-        oldKey = getKey(oldVKid);
+        oldKey = getKey((oldVKid = prevVNode.children[oldHead]));
         newKey = getKey(nextVNode.children[newHead]);
 
         if (
-          newKeyed.has(oldKey) ||
+          newKeyed[oldKey] ||
           (newKey != null && newKey === getKey(prevVNode.children[oldHead + 1]))
         ) {
           if (oldKey == null) {
@@ -206,11 +203,10 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
               nextVNode.children[newHead],
               isSvg
             );
-            newKeyed.add(newKey);
+            newKeyed[newKey] = true;
             oldHead++;
           } else {
-            let tmpVKid = keyed[newKey];
-            if (tmpVKid != null) {
+            if ((tmpVKid = keyed[newKey]) != null) {
               patchNode(
                 node,
                 node.insertBefore(tmpVKid.node, oldVKid && oldVKid.node),
@@ -218,7 +214,7 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
                 nextVNode.children[newHead],
                 isSvg
               );
-              newKeyed.add(newKey);
+              newKeyed[newKey] = true;
             } else {
               patchNode(
                 node,
@@ -234,16 +230,14 @@ const patchNode = (parent, node, prevVNode, nextVNode, isSvg) => {
       }
 
       while (oldHead <= oldTail) {
-        oldVKid = prevVNode.children[oldHead];
-        if (getKey(oldVKid) == null) {
+        if (getKey((oldVKid = prevVNode.children[oldHead++])) == null) {
           node.removeChild(oldVKid.node);
         }
-        oldHead++;
       }
 
-      for (const key in keyed) {
-        if (newKeyed[key] == null) {
-          node.removeChild(keyed[key].node);
+      for (let i in keyed) {
+        if (newKeyed[i] == null) {
+          node.removeChild(keyed[i].node);
         }
       }
     }

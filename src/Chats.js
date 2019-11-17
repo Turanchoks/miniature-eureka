@@ -3,7 +3,7 @@ import {
   getTimeSince,
   getContentSizeStr,
   getLastMessageStr,
-  getFormattedText
+  getFormattedText,
 } from './utils';
 import { h } from './render';
 import { loadChat } from './apiClient';
@@ -15,7 +15,7 @@ export const Chats = ({
   users,
   groups,
   quoteMessages,
-  messagePhotos
+  messagePhotos,
 }) => {
   if (chats.length === 0) {
     return (
@@ -174,7 +174,7 @@ export const Chats = ({
           {currentChat.messages ? (
             ChatMessages(currentChat, users, quoteMessages, messagePhotos)
           ) : (
-            <div class="flex-wrapper flex-wrapper_center">
+            <div key="loader" class="flex-wrapper flex-wrapper_center">
               <div class="loader" />
             </div>
           )}
@@ -249,7 +249,7 @@ const getMessageBody = (content, messagePhotos) => {
     }
     case 'messagePhoto': {
       const {
-        photo: { minithumbnail, sizes }
+        photo: { minithumbnail, sizes },
       } = content;
       const firstPhoto = sizes[0];
       if (
@@ -287,7 +287,7 @@ const ChatMessages = (
             isChannelPost,
             senderUserId,
             id,
-            replyToMessageId
+            replyToMessageId,
           },
           index
         ) => {
@@ -329,9 +329,9 @@ const ChatMessages = (
           }
 
           return (
-            <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
+            <div key={id} class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
-                <div class="msg-avatar">
+                <div key="msg-avatar" class="msg-avatar">
                   {senderUser.profilePhoto && !senderUser.profilePhotoSrc ? (
                     <div class="chat__img" />
                   ) : senderUser.profilePhotoSrc ? (
@@ -345,7 +345,10 @@ const ChatMessages = (
               ) : (
                 ''
               )}
-              <div class={`${messageClass} ${lastClass} ${firstClass}`}>
+              <div
+                key="msg"
+                class={`${messageClass} ${lastClass} ${firstClass}`}
+              >
                 {replyToMessageId && quoteMessage ? (
                   <div class="quote">
                     <div class="msg-name">{quoteMessageSender.firstName}</div>
