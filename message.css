@@ -161,3 +161,24 @@
   mask-image: radial-gradient(circle 1px at -14px -3px, transparent 0, transparent 28px, black);
   -webkit-mask-image: radial-gradient(circle 1px at -14px -3px, transparent 0, transparent 28px, black);
 }
+
+
+.message-attachment {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.message-caption {
+  margin-top: 10px;
+}
+
+.message-attachment-info {
+  font-weight: bold;
+}
+
+.message-attachment-weight {
+  font-weight: normal;
+  margin-top: 4px;
+  color: #707579;
+}

@@ -1,0 +1,80 @@
+.file-icon {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  font-weight: bold;
+  background: #4EA4F6;
+  position: relative;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+.file-icon::before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-bottom-left-radius: 3px;
+  border-width: 9px;
+  border-style: solid;
+  border-color: #fff #fff rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.35);
+}
+
+.msg-out .file-icon::before {
+  border-color: #edffde #edffde rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.35);
+}
+
+.file-icon::after {
+display: flex;
+content: attr(data-type);
+position: absolute;
+height: 48px;
+font-size: 15px;
+color: #fff;
+text-transform: lowercase;
+width: 100%;
+white-space: nowrap;
+overflow: hidden;
+align-items: center;
+justify-content: center;
+margin-top: 8px;
+}
+/* fileicon.types */
+.file-icon[data-type=zip],
+.file-icon[data-type=rar] {
+  background: #acacac;
+}
+.file-icon[data-type^=doc] {
+  background: #4EA4F6;
+}
+.file-icon[data-type^=xls],
+.file-icon[data-type=txt] {
+  background: #4FAE4E;
+}
+.file-icon[data-type^=ppt],
+.file-icon[data-type=pdf] {
+  background: #E53935;
+}
+
+.file-icon[data-type=mp3],
+.file-icon[data-type=wma],
+.file-icon[data-type=m4a],
+.file-icon[data-type=flac] {
+  background: #8e44ad;
+}
+.file-icon[data-type=mp4],
+.file-icon[data-type=wmv],
+.file-icon[data-type=mov],
+.file-icon[data-type=avi],
+.file-icon[data-type=mkv] {
+  background: #7a3ce7;
+}
+.file-icon[data-type=bmp],
+.file-icon[data-type=jpg],
+.file-icon[data-type=jpeg],
+.file-icon[data-type=gif],
+.file-icon[data-type=png] {
+  background: #f4b400;
+}

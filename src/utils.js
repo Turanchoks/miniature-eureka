@@ -75,6 +75,13 @@ export const getLastMessageStr = content => {
   }
 };
 
+export const getContentSizeStr = bytes => {
+  const kb = bytes / 1000;
+  if (kb < 1000) return kb.toFixed(2) + ' KB';
+  
+  return (kb / 1000).toFixed(2) + '  MB';
+}
+
 export const normalize = list => {
   const obj = {};
   for (const item of list) {

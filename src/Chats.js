@@ -1,4 +1,4 @@
-import { getDate, getTimeSince, getLastMessageStr } from "./utils";
+import { getDate, getTimeSince, getContentSizeStr, getLastMessageStr } from "./utils";
 import { h } from "./superfine";
 import { loadChat } from "./apiClient";
 import { setState } from "./state";
@@ -182,14 +182,46 @@ const UserStatus = (status, user, group) => {
   }
 }
 
+const getMessageBody = (content) => {
+  const messageType = content['@type'];
+  
+  switch(messageType) {
+    case "messageText":
+      return <span>{content.text.text}</span>;
+    case "messageDocument": 
+      const extension = content.document.file_name.split('.').pop();
+      return <div>
+        <div class="message-attachment">
+          <div
+            class="file-icon message-attachment-icon"
+            data-type={extension}
+          ></div>
+          <div class="message-attachment-info">
+            {content.document.file_name}
+            <div class="message-attachment-weight">
+              {getContentSizeStr(content.document.document.expected_size)}
+            </div>
+          </div>
+        </div>
+        {content.caption && content.caption.text
+          ? <div class="message-caption">{content.caption.text}</div>
+          : ''
+        }
+      </div>
+    default: 
+      return 'Wip';
+  }
+}
+
 const ChatMessages = ({ messages, type }, users) => {
   const isPrivateChat = type["@type"] === "chatTypePrivate";
+  console.log(messages);
   return (
     <div class="messages-list">
       {messages.map(
         (
           {
-            content: { text, caption, sticker, photo },
+            content,
             date,
             isOutgoing,
             isChannelPost,
@@ -197,18 +229,30 @@ const ChatMessages = ({ messages, type }, users) => {
           },
           index
         ) => {
-          let data;
-          if (photo) {
-            data = "WIP: photo with caption ";
-          } else if (text) {
-            data = text.text;
-          } else if (caption) {
-            data = caption.text;
-          } else if (sticker) {
-            data = sticker.emoji;
-          } else {
-            data = "WIP";
-          }
+
+          // let data;
+          // const contentType = content['@type'];
+          
+          // switch (contentType) {
+          //   case "messageText":
+          //     console.log('case', content);
+          //     data = content.text.text;
+          //   case "messageDocument":
+          //     data = "Document";
+          //   default: 
+          //     data = "WIP Message type";
+          // }
+          // if (photo) {
+          //   data = "WIP: photo with caption ";
+          // } else if (text) {
+          //   data = text.text;
+          // } else if (caption) {
+          //   data = caption.text;
+          // } else if (sticker) {
+          //   data = sticker.emoji;
+          // } else {
+          //   data = "WIP";
+          // }
           const messageWrapperClass = isOutgoing ? "message out" : "message in";
 
           const messageClass = isOutgoing ? "msg msg-out" : "msg msg-in";
@@ -253,7 +297,7 @@ const ChatMessages = ({ messages, type }, users) => {
                   ""
                 )}
                 <div class="msg-text">
-                  <span>{data}</span>
+                  {getMessageBody(content)}
                   <div class="msg-time">
                     <span>{getDate(date)}</span>
                   </div>
