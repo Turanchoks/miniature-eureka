@@ -62,7 +62,8 @@
   transform: rotate(-90deg);
 }
 
-.country-code-view__option:hover {
+.country-code-list__option.hovered,
+.country-code-list__option:hover {
   background: #dddddd;
 }
 
@@ -72,6 +73,12 @@
 
 .country-name {
   flex: 1;
+}
+
+.code-search {
+  border: 0;
+  color: #fff;
+  outline: none;
 }
 
 .hide {

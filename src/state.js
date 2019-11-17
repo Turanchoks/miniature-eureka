@@ -1,27 +1,30 @@
-import { shallowEquals } from "./utils";
-import { renderApp } from "./renderApp";
+import { shallowEquals } from './utils';
+import { renderApp } from './renderApp';
+import { countries } from './country-code-select/countries';
 
 export let state = {
-  phone: "",
-  code: "",
+  phone: '',
+  code: '',
   chats: [],
   currentChat: {},
   keepSignedIn: false,
-  step: "", // phone input | check code | chats
+  step: '', // phone input | check code | chats
   loading: false,
   isAuthorized: false,
   isCodeValid: true,
-  countryCodeSelectValue: "",
+  countryCodeSelectValue: '',
   countryCodeSelectOpen: false,
+  countryCodeSelectPlaceholder: null,
   users: {},
   groups: {},
-  userMe: {}
+  userMe: {},
+  countries,
 };
 
 export const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState
+    ...partialState,
   };
 
   if (!shallowEquals(state, nextState)) {
@@ -32,6 +35,6 @@ export const setState = partialState => {
 
 export const setLoading = loading => {
   setState({
-    loading
+    loading,
   });
 };
