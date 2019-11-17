@@ -48,9 +48,13 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
               lastMessageSenderStatus = lastMessageSender.status["@type"];
             }
             const chatClass = chat.id === currentChat.id ? "chat chat_active" : "chat";
-            const isOnline = lastMessageSenderStatus === "userStatusOnline";
 
-            const onlineClass = isPrivateChat && isOnline
+            const isOnline = isPrivateChat
+              && chat.type
+              && users[chat.type.user_id]
+              && users[chat.type.user_id].status["@type"] === "userStatusOnline";
+
+            const onlineClass = isOnline
               ? "chat__avatar_online"
               : "";
 
