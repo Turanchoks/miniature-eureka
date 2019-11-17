@@ -3,7 +3,7 @@ import {
   getTimeSince,
   getContentSizeStr,
   getLastMessageStr,
-  getFormattedText,
+  getFormattedText
 } from './utils';
 import { h } from './render';
 import { loadChat } from './apiClient';
@@ -16,9 +16,9 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
       <div class="flex-wrapper">
         <div id="wrapper">
           <aside id="left-sidebar" class="flex-wrapper flex-wrapper_center">
-            <div class="loader"></div>
+            <div class="loader" />
           </aside>
-          <main id="main"></main>
+          <main id="main" />
         </div>
       </div>
     );
@@ -95,7 +95,9 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                 }}
               >
                 <div class={`chat__avatar ${onlineClass}`}>
-                  {chat.imgSrc ? (
+                  {chat.photo && !chat.imgSrc ? (
+                    <div class="chat__img" />
+                  ) : chat.imgSrc ? (
                     <img src={chat.imgSrc} class="chat__img" />
                   ) : (
                     <div class="chat__img chat__img_default">
@@ -179,7 +181,7 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
             ChatMessages(currentChat, users)
           ) : (
             <div class="flex-wrapper flex-wrapper_center">
-              <div class="loader"></div>
+              <div class="loader" />
             </div>
           )}
         </main>
@@ -236,7 +238,7 @@ const getMessageBody = content => {
             <div
               class="file-icon message-attachment-icon"
               data-type={extension}
-            ></div>
+            />
             <div class="message-attachment-info">
               {content.document.file_name}
               <div class="message-attachment-weight">
@@ -294,7 +296,9 @@ const ChatMessages = ({ messages, type }, users) => {
             <div key={id} class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
                 <div class="msg-avatar">
-                  {senderUser.profilePhotoSrc ? (
+                  {senderUser.profilePhoto && !senderUser.profilePhotoSrc ? (
+                    <div class="chat__img" />
+                  ) : senderUser.profilePhotoSrc ? (
                     <img id="msg-avatar" src={senderUser.profilePhotoSrc} />
                   ) : (
                     <div class="chat__img chat__img_default">
@@ -313,7 +317,7 @@ const ChatMessages = ({ messages, type }, users) => {
                 )}
                 <div class="msg-text">
                   {formattedTextContent ? (
-                    <div innerHTML={formattedTextContent}></div>
+                    <div innerHTML={formattedTextContent} />
                   ) : (
                     getMessageBody(content)
                   )}
