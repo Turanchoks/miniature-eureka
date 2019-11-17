@@ -321,7 +321,7 @@ export async function loadUsersByIds(userIds) {
 
 const getCurrentChatIdFromPath = () => {
   const { pathname } = location;
-  return pathname.split('/')[1];
+  return pathname.split('/')[1].replace(/minus/, '-');
 };
 
 export async function loadChatPage(currentChat, offset = 0) {
@@ -361,9 +361,13 @@ export async function loadChat(currentChat, isUpdate = false) {
     const { pathname } = location;
     const pathChatId = getCurrentChatIdFromPath();
     if (!pathChatId) {
-      window.history.replaceState({}, null, currentChat.id);
+      window.history.replaceState(
+        {},
+        null,
+        String(currentChat.id).replace(/-/, 'minus')
+      );
     } else if (pathChatId !== String(currentChat.id)) {
-      push(currentChat.id);
+      push(String(currentChat.id).replace(/-/, 'minus'));
     }
 
     setState({
