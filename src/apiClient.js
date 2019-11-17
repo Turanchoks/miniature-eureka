@@ -347,7 +347,9 @@ export async function loadChatPage(currentChat, offset = 0) {
     }
   }
 
-  mainEl.scrollTop = mainEl.scrollHeight - scrollBeforeUpdate;
+  if (mainEl) {
+    mainEl.scrollTop = mainEl.scrollHeight - scrollBeforeUpdate;
+  }
 
   setState({
     loadingPage: false,
