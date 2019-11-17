@@ -154,7 +154,7 @@ export const needToDownloadSmallPhoto = item =>
   !item.small.local.is_downloading_completed &&
   !item.small.local.is_downloading_active;
 
-async function loadChats() {
+export async function loadChats() {
   const chatsId = await apiClient
     .send({
       '@type': 'getChats',

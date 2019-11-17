@@ -1,6 +1,6 @@
 import { h } from './render';
 import { setState, setLoading } from './state';
-import { apiClient } from './apiClient';
+import { apiClient, loadChats } from './apiClient';
 import logo from '../assets/logo.png';
 import TwoFactorSetupMonkeyClose from './Monkey/TwoFactorSetupMonkeyClose.tgs';
 
@@ -17,18 +17,19 @@ const submitPassword = password => {
       '@type': 'checkAuthenticationPassword',
       password
     })
-      .then(result => {
-        setState({
-          loading: false,
-          step: 'chats'
-        });
-      })
-      .catch(error => {
-        setState({
-          loading: false
-        });
-        console.log('submitPassword', error);
+    .then(result => {
+      setState({
+        loading: false,
+        step: 'chats'
       });
+      loadChats();
+    })
+    .catch(error => {
+      setState({
+        loading: false
+      });
+      console.log('submitPassword', error);
+    });
 };
 
 export const SignUpPassword = state => {
@@ -37,7 +38,7 @@ export const SignUpPassword = state => {
     <div class="flex-wrapper flex-wrapper_center">
       <div class="sign-up">
         <div class="sign-up__heading">
-        <div class="sign-up__monkey">
+          <div class="sign-up__monkey">
             <tgs-player
               autoplay
               loop="false"
