@@ -3,14 +3,14 @@
   width: 54px;
   height: 54px;
   font-weight: bold;
-  background: #4EA4F6;
+  background: var(--color-blue);
   position: relative;
   border-radius: 6px;
   margin-right: 8px;
 }
 .file-icon::before {
   display: block;
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   right: 0;
@@ -23,58 +23,59 @@
 }
 
 .msg-out .file-icon::before {
-  border-color: #edffde #edffde rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.35);
+  border-color: var(--color-msg-out-back) var(--color-msg-out-back)
+    rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.35);
 }
 
 .file-icon::after {
-display: flex;
-content: attr(data-type);
-position: absolute;
-height: 48px;
-font-size: 15px;
-color: #fff;
-text-transform: lowercase;
-width: 100%;
-white-space: nowrap;
-overflow: hidden;
-align-items: center;
-justify-content: center;
-margin-top: 8px;
+  display: flex;
+  content: attr(data-type);
+  position: absolute;
+  height: 48px;
+  font-size: 15px;
+  color: #fff;
+  text-transform: lowercase;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
 }
 /* fileicon.types */
-.file-icon[data-type=zip],
-.file-icon[data-type=rar] {
+.file-icon[data-type='zip'],
+.file-icon[data-type='rar'] {
   background: #acacac;
 }
-.file-icon[data-type^=doc] {
-  background: #4EA4F6;
+.file-icon[data-type^='doc'] {
+  background: var(--color-blue);
 }
-.file-icon[data-type^=xls],
-.file-icon[data-type=txt] {
-  background: #4FAE4E;
+.file-icon[data-type^='xls'],
+.file-icon[data-type='txt'] {
+  background: var(--color-green);
 }
-.file-icon[data-type^=ppt],
-.file-icon[data-type=pdf] {
-  background: #E53935;
+.file-icon[data-type^='ppt'],
+.file-icon[data-type='pdf'] {
+  background: var(--color-red);
 }
 
-.file-icon[data-type=mp3],
-.file-icon[data-type=wma],
-.file-icon[data-type=m4a],
-.file-icon[data-type=flac] {
-  background: #8e44ad;
+.file-icon[data-type='mp3'],
+.file-icon[data-type='wma'],
+.file-icon[data-type='m4a'],
+.file-icon[data-type='flac'] {
+  background: var(--color-purple);
 }
-.file-icon[data-type=mp4],
-.file-icon[data-type=wmv],
-.file-icon[data-type=mov],
-.file-icon[data-type=avi],
-.file-icon[data-type=mkv] {
-  background: #7a3ce7;
+.file-icon[data-type='mp4'],
+.file-icon[data-type='wmv'],
+.file-icon[data-type='mov'],
+.file-icon[data-type='avi'],
+.file-icon[data-type='mkv'] {
+  background: var(--color-violet);
 }
-.file-icon[data-type=bmp],
-.file-icon[data-type=jpg],
-.file-icon[data-type=jpeg],
-.file-icon[data-type=gif],
-.file-icon[data-type=png] {
-  background: #f4b400;
+.file-icon[data-type='bmp'],
+.file-icon[data-type='jpg'],
+.file-icon[data-type='jpeg'],
+.file-icon[data-type='gif'],
+.file-icon[data-type='png'] {
+  background: var(--color-red);
 }

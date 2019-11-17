@@ -1,0 +1,20 @@
+:root {
+  --color-msg-in-back: #ffffff;
+  --color-msg-out-back: #eeffde;
+  --color-chat-back: #e6ebee;
+  --color-blue: #428edb;
+  --color-green: #4fae4e;
+  --color-red: #e53935;
+  --color-purple: #8e44ad;
+  --color-violet: #7a3ce7;
+  --color-purple: #8e44ad;
+
+  --color-grey: #b2bac1;
+  --color-grey-dark: #c4c9cc;
+
+  --color-blue-hover: rgba(0, 0, 0, 0.08);
+  --color-grey-hover: rgba(112, 117, 121, 0.08);
+
+  --brd-radius-in: 15px;
+  --brd-radius-out: 8px;
+}

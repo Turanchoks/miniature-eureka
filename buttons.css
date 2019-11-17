@@ -2,7 +2,7 @@
   --color-blue: #428edb;
   --color-blue-hover: rgba(0, 0, 0, 0.08);
   --color-grey: #f2f2f4;
-  --color-greyHover: rgba(112, 117, 121, 0.08);
+  --color-grey-hover: rgba(112, 117, 121, 0.08);
 }
 button {
   border: none;
@@ -73,10 +73,10 @@ button:focus {
   color: var(--color-blue);
 }
 .grey:hover {
-  box-shadow: 0 0 0 54px var(--color-greyHover) inset;
+  box-shadow: 0 0 0 54px var(--color-grey-hover) inset;
 }
 .grey:before {
-  background: var(--color-greyHover);
+  background: var(--color-grey-hover);
 }
 
 .with-icon {
