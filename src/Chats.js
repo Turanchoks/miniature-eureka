@@ -6,7 +6,7 @@ import {
   getFormattedText,
 } from './utils';
 import { h } from './render';
-import { loadChat } from './apiClient';
+import { loadChat, loadChatPage } from './apiClient';
 import { setState } from './state';
 
 export const Chats = ({
@@ -16,6 +16,7 @@ export const Chats = ({
   groups,
   quoteMessages,
   messagePhotos,
+  loadingPage,
 }) => {
   if (chats.length === 0) {
     return (
@@ -141,7 +142,14 @@ export const Chats = ({
             );
           })}
         </aside>
-        <main id="main">
+        <main
+          id="main"
+          onscroll={e => {
+            if (e.target.scrollTop < 100 && !loadingPage) {
+              loadChatPage(currentChat);
+            }
+          }}
+        >
           {currentChat.messages ? (
             <header id="main-header">
               <div class="chat__avatar chat__avatar_small">

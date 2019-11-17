@@ -20,7 +20,8 @@ let state = {
   users: {},
   groups: {},
   messagePhotos: {},
-  countries
+  countries,
+  loadingPage: false,
 };
 
 export const getState = () => state;
@@ -28,7 +29,7 @@ export const getState = () => state;
 export const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState
+    ...partialState,
   };
 
   if (!shallowEquals(state, nextState)) {
@@ -39,6 +40,6 @@ export const setState = partialState => {
 
 export const setLoading = loading => {
   setState({
-    loading
+    loading,
   });
 };
