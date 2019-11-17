@@ -1,14 +1,3 @@
-:root {
-  --color-msg-in-back: #ffffff;
-  --color-msg-out-back: #eeffde;
-  --color-chat-back: #e6ebee;
-  --color-blue: #428edb;
-  --color-green: #4fae4e;
-  --color-grey: #b2bac1;
-
-  --brd-radius-in: 15px;
-  --brd-radius-out: 8px;
-}
 .message {
   display: flex;
   align-items: flex-end;
@@ -76,6 +65,8 @@
 }
 .msg-text {
   white-space: pre-line;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .msg-text * {
@@ -83,20 +74,22 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.msg-text__content {
+  flex-grow: 0.5;
+  margin-left: auto;
+}
 
 .msg-time {
   font-size: 12px;
-  display: inline-block;
-  width: 50px;
-}
-.msg-time > span {
-  position: absolute;
-  right: 1px;
-  bottom: -2px;
-  display: flex;
+  display: inline-flex;
+  margin-left: 5px;
+  flex-grow: 1;
+  justify-content: flex-end;
+  margin-bottom: -5px;
+  align-items: flex-end;
 }
 .msg-in .msg-time {
-  color: var(--color-grey);
+  color: var(--color-grey-dark);
 }
 .msg-out .msg-time {
   color: var(--color-green);
@@ -120,13 +113,18 @@
   font-size: 14px;
   margin-bottom: 10px;
 }
-.quote-in {
+.msg-in .quote {
+  border-left: 2px solid var(--color-blue);
+}
+.msg-out .quote {
+  border-left: 2px solid var(--color-green);
+}
+/* .quote-in {
   border-left: 2px solid var(--color-blue);
 }
 .quote-out {
   border-left: 2px solid var(--color-green);
-}
-
+} */
 
 /* Tail magic */
 
@@ -156,17 +154,36 @@
   right: -13px;
   bottom: 0px;
   background: var(--color-msg-out-back);
-  mask-image: radial-gradient(circle 1px at 28px -3px, transparent 0, transparent 28px, black);
-  -webkit-mask-image: radial-gradient(circle 1px at 28px -3px, transparent 0, transparent 28px, black);
+  mask-image: radial-gradient(
+    circle 1px at 28px -3px,
+    transparent 0,
+    transparent 28px,
+    black
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 1px at 28px -3px,
+    transparent 0,
+    transparent 28px,
+    black
+  );
 }
 .msg.last.msg-in:before {
   left: -13px;
   bottom: 0px;
   background: var(--color-msg-in-back);
-  mask-image: radial-gradient(circle 1px at -14px -3px, transparent 0, transparent 28px, black);
-  -webkit-mask-image: radial-gradient(circle 1px at -14px -3px, transparent 0, transparent 28px, black);
+  mask-image: radial-gradient(
+    circle 1px at -14px -3px,
+    transparent 0,
+    transparent 28px,
+    black
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 1px at -14px -3px,
+    transparent 0,
+    transparent 28px,
+    black
+  );
 }
-
 
 .message-attachment {
   display: flex;

@@ -347,7 +347,7 @@ const ChatMessages = (
               )}
               <div class={`${messageClass} ${lastClass} ${firstClass}`}>
                 {replyToMessageId && quoteMessage ? (
-                  <div class="quote quote-out">
+                  <div class="quote">
                     <div class="msg-name">{quoteMessageSender.firstName}</div>
                     <div class="msg-text">
                       {quoteMessageFormattedTextContent ? (
@@ -361,7 +361,9 @@ const ChatMessages = (
                   ''
                 )}
                 {showFullMessage ? (
-                  <div class="msg-name">{senderUser.firstName}</div>
+                  <div class="msg-text__content" class="msg-name">
+                    {senderUser.firstName}
+                  </div>
                 ) : (
                   ''
                 )}
@@ -371,9 +373,7 @@ const ChatMessages = (
                   ) : (
                     getMessageBody(content, messagePhotos)
                   )}
-                  <div class="msg-time">
-                    <span>{getDate(date)}</span>
-                  </div>
+                  <div class="msg-time">{getDate(date)}</div>
                 </div>
               </div>
             </div>
