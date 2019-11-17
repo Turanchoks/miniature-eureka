@@ -87,6 +87,9 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                 key={chat.id}
                 class={chatClass}
                 onclick={() => {
+                  if (chat.id === currentChat.id) {
+                    return;
+                  }
                   push(chat.id);
                   loadChat(chat);
                 }}
@@ -258,7 +261,10 @@ const ChatMessages = ({ messages, type }, users) => {
   return (
     <div class="messages-list">
       {messages.map(
-        ({ content, date, isOutgoing, isChannelPost, senderUserId }, index) => {
+        (
+          { content, date, isOutgoing, isChannelPost, senderUserId, id },
+          index
+        ) => {
           const messageWrapperClass = isOutgoing ? 'message out' : 'message in';
 
           const messageClass = isOutgoing ? 'msg msg-out' : 'msg msg-in';
@@ -285,10 +291,7 @@ const ChatMessages = ({ messages, type }, users) => {
             content['@type'] === 'messageText' && getFormattedText(content);
 
           return (
-            <div
-              key={date}
-              class={`${messageWrapperClass} ${extraPaddedClass}`}
-            >
+            <div key={id} class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
                 <div class="msg-avatar">
                   {senderUser.profilePhotoSrc ? (
