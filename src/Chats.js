@@ -9,7 +9,14 @@ import { h } from './render';
 import { loadChat } from './apiClient';
 import { setState } from './state';
 
-export const Chats = ({ chats, currentChat, users, groups, quoteMessages }) => {
+export const Chats = ({
+  chats,
+  currentChat,
+  users,
+  groups,
+  quoteMessages,
+  messagePhotos
+}) => {
   if (chats.length === 0) {
     return (
       <div class="flex-wrapper">
@@ -165,7 +172,7 @@ export const Chats = ({ chats, currentChat, users, groups, quoteMessages }) => {
             ''
           )}
           {currentChat.messages ? (
-            ChatMessages(currentChat, users, quoteMessages)
+            ChatMessages(currentChat, users, quoteMessages, messagePhotos)
           ) : (
             <div class="flex-wrapper flex-wrapper_center">
               <div class="loader" />
@@ -213,11 +220,10 @@ const UserStatus = (status, user, group) => {
   }
 };
 
-const getMessageBody = content => {
+const getMessageBody = (content, messagePhotos) => {
   const messageType = content['@type'];
-
   switch (messageType) {
-    case 'messageDocument':
+    case 'messageDocument': {
       const extension = content.document.file_name.split('.').pop();
       return (
         <div>
@@ -240,18 +246,49 @@ const getMessageBody = content => {
           )}
         </div>
       );
+    }
+    case 'messagePhoto': {
+      const {
+        photo: { minithumbnail, sizes }
+      } = content;
+      const firstPhoto = sizes[0];
+      if (
+        firstPhoto &&
+        firstPhoto.photo.id &&
+        messagePhotos[firstPhoto.photo.id]
+      ) {
+        return <img src={messagePhotos[firstPhoto.photo.id].imgSrc} />;
+      }
+      // if (minithumbnail && minithumbnail.data) {
+      //   return <img src={`data:image/jpeg;base64,${minithumbnail.data}`} />;
+      // }
+      return <div>messagePhoto</div>;
+    }
     default:
       return <span>'Wip'</span>;
   }
 };
 
-const ChatMessages = ({ messages, type }, users, quoteMessages) => {
+const ChatMessages = (
+  { messages, type },
+  users,
+  quoteMessages,
+  messagePhotos
+) => {
   const isPrivateChat = type['@type'] === 'chatTypePrivate';
   return (
     <div class="messages-list">
       {messages.map(
         (
-          { content, date, isOutgoing, isChannelPost, senderUserId, id, replyToMessageId },
+          {
+            content,
+            date,
+            isOutgoing,
+            isChannelPost,
+            senderUserId,
+            id,
+            replyToMessageId
+          },
           index
         ) => {
           const messageWrapperClass = isOutgoing ? 'message out' : 'message in';
@@ -284,12 +321,13 @@ const ChatMessages = ({ messages, type }, users, quoteMessages) => {
           let quoteMessageSender;
           if (replyToMessageId && quoteMessages[replyToMessageId]) {
             quoteMessage = quoteMessages[replyToMessageId];
-            quoteMessageFormattedTextContent = quoteMessage
-              && quoteMessage.content['@type'] === 'messageText'
-              && getFormattedText(quoteMessage.content);
+            quoteMessageFormattedTextContent =
+              quoteMessage &&
+              quoteMessage.content['@type'] === 'messageText' &&
+              getFormattedText(quoteMessage.content);
             quoteMessageSender = users[quoteMessage.senderUserId] || '';
           }
-          
+
           return (
             <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
@@ -308,19 +346,20 @@ const ChatMessages = ({ messages, type }, users, quoteMessages) => {
                 ''
               )}
               <div class={`${messageClass} ${lastClass} ${firstClass}`}>
-                {replyToMessageId && quoteMessage
-                  ? <div class="quote quote-out">
-                      <div class="msg-name">{quoteMessageSender.firstName}</div>
-                      <div class="msg-text">
+                {replyToMessageId && quoteMessage ? (
+                  <div class="quote quote-out">
+                    <div class="msg-name">{quoteMessageSender.firstName}</div>
+                    <div class="msg-text">
                       {quoteMessageFormattedTextContent ? (
-                        <div innerHTML={quoteMessageFormattedTextContent}></div>
+                        <div innerHTML={quoteMessageFormattedTextContent} />
                       ) : (
-                        getMessageBody(quoteMessage.content)
+                        getMessageBody(quoteMessage.content, messagePhotos)
                       )}
-                      </div>
                     </div>
-                  : ''
-                }
+                  </div>
+                ) : (
+                  ''
+                )}
                 {showFullMessage ? (
                   <div class="msg-name">{senderUser.firstName}</div>
                 ) : (
@@ -330,7 +369,7 @@ const ChatMessages = ({ messages, type }, users, quoteMessages) => {
                   {formattedTextContent ? (
                     <div innerHTML={formattedTextContent} />
                   ) : (
-                    getMessageBody(content)
+                    getMessageBody(content, messagePhotos)
                   )}
                   <div class="msg-time">
                     <span>{getDate(date)}</span>

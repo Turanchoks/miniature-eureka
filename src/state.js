@@ -19,7 +19,7 @@ let state = {
   countryCodeSelectPlaceholder: null,
   users: {},
   groups: {},
-  userMe: {},
+  messagePhotos: {},
   countries
 };
 

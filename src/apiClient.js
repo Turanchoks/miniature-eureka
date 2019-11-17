@@ -364,18 +364,19 @@ export async function loadChat(currentChat, isUpdate = false) {
             res.push(message.replyToMessageId);
           }
           return res;
-        }, []),
-      }).then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
-  
+        }, [])
+      })
+      .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
+
     setState({
       currentChat: {
         ...currentChat,
-        messages,
+        messages
       },
       quoteMessages: {
         ...getState().quoteMessages,
-        ...normalize(quoteMessages),
-      },
+        ...normalize(quoteMessages)
+      }
     });
 
     const userIds = [];
@@ -405,6 +406,61 @@ export async function loadChat(currentChat, isUpdate = false) {
     loadSuperGroupsByIds(superGroupsIds);
     loadBasicGroupsByIds(groupsIds);
     loadUsersByIds(userIds);
+
+    const messagePhotoIds = [];
+    const messagePhotos = {};
+    for (const message of messages) {
+      const { content } = message;
+      const messageType = content['@type'];
+      if (messageType === 'messagePhoto') {
+        const {
+          photo: { sizes }
+        } = content;
+        const firstPhoto = sizes[0] && sizes[0].photo;
+        if (firstPhoto) {
+          messagePhotoIds.push(firstPhoto.id);
+          messagePhotos[firstPhoto.id] = firstPhoto;
+        }
+      }
+    }
+
+    if (messagePhotoIds.length > 0) {
+      await Promise.all(
+        messagePhotoIds.map(id => {
+          const messagePhoto = messagePhotos[id];
+          if (
+            !messagePhoto.local.is_downloading_completed &&
+            !messagePhoto.local.is_downloading_active
+          ) {
+            return downloadFile(id);
+          }
+        })
+      );
+      await Promise.all(
+        messagePhotoIds.map(id => {
+          return apiClient
+            .send({
+              '@type': 'readFile',
+              file_id: id
+            })
+            .then(response => {
+              const blob = response.data;
+              let imgSrc = '';
+              if (blob) {
+                imgSrc = URL.createObjectURL(blob);
+              }
+              messagePhotos[id] = {
+                ...messagePhotos[id],
+                imgSrc
+              };
+            });
+        })
+      );
+
+      setState({
+        messagePhotos
+      });
+    }
 
     if (!isUpdate) {
       // Scroll to bottom in messages list after chats loaded
