@@ -5,6 +5,7 @@ import { countries } from './country-code-select/countries';
 let state = {
   phone: '',
   code: '',
+  password: '',
   chats: [],
   currentChat: {},
   keepSignedIn: false,
@@ -18,7 +19,7 @@ let state = {
   users: {},
   groups: {},
   userMe: {},
-  countries,
+  countries
 };
 
 export const getState = () => state;
@@ -26,7 +27,7 @@ export const getState = () => state;
 export const setState = partialState => {
   const nextState = {
     ...state,
-    ...partialState,
+    ...partialState
   };
 
   if (!shallowEquals(state, nextState)) {
@@ -37,6 +38,6 @@ export const setState = partialState => {
 
 export const setLoading = loading => {
   setState({
-    loading,
+    loading
   });
 };

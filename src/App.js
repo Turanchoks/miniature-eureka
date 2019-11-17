@@ -17,19 +17,20 @@ const ric = window.requestIdleCallback || (cb => setTimeout(cb, 0));
 const CheckingYourStatus = () => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
-      <div class="loading"></div>
+      <div class="loading" />
     </div>
   );
 };
 
 const Components = {
-  CheckingYourStatus,
+  CheckingYourStatus
 };
 
 const imports = [
   [() => import('./SignUpFirstStep'), 'SignUpFirstStep'],
   [() => import('./SignUpSecondStep'), 'SignUpSecondStep'],
-  [() => import('./Chats'), 'Chats'],
+  [() => import('./SignUpPassword'), 'SignUpPassword'],
+  [() => import('./Chats'), 'Chats']
 ];
 
 for (const [loader, name] of imports) {
@@ -50,7 +51,7 @@ for (const [loader, name] of imports) {
         if (requireUpdate) {
           // force update
           setState({
-            now: Date.now(),
+            now: Date.now()
           });
         }
         requireUpdate = false;
@@ -63,13 +64,15 @@ for (const [loader, name] of imports) {
 
 export const App = state => {
   const { isAuthorized, loading, step } = state;
-  // getAuthorizationState is an offline request
+  // return Components.SignUpPassword(state);
 
   switch (step) {
     case 'phone input':
       return Components.SignUpFirstStep(state);
     case 'check code':
       return Components.SignUpSecondStep(state);
+    case 'wait password':
+      return Components.SignUpPassword(state);
     case 'chats':
       return Components.Chats(state);
     default:

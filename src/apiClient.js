@@ -4,7 +4,7 @@ import {
   getBrowser,
   getOSName,
   transformObjectKeysSnakeToCamel,
-  normalize,
+  normalize
 } from './utils';
 import { setState, getState } from './state';
 
@@ -41,13 +41,13 @@ let DEFAULT_TD_WEB_CLIENT_OPTIONS = {
   readOnly: false,
   isBackground: false,
   useDatabase: false,
-  wasmUrl: `${WASM_FILE_NAME}?_sw-precache=${WASM_FILE_HASH}`,
+  wasmUrl: `${WASM_FILE_NAME}?_sw-precache=${WASM_FILE_HASH}`
 };
 
 const tdWebClient = new TdWebClient({
   ...DEFAULT_TD_WEB_CLIENT_OPTIONS,
   api_id: TELEGRAM_API_ID,
-  api_hash: TELEGRAM_API_HASH,
+  api_hash: TELEGRAM_API_HASH
 });
 
 const databaseExistsCheck = false;
@@ -69,6 +69,10 @@ tdWebClient.onUpdate = update => {
         case 'authorizationStateWaitCode': {
           const { code_info } = update.authorization_state;
           setState({ step: 'check code', phone: code_info.phone_number });
+          break;
+        }
+        case 'authorizationStateWaitPassword': {
+          setState({ step: 'wait password' });
           break;
         }
         case 'authorizationStateReady': {
@@ -101,7 +105,7 @@ tdWebClient.onUpdate = update => {
         loadChat(
           {
             ...getState().currentChat,
-            lastMessage: last_message,
+            lastMessage: last_message
           },
           true
         );
@@ -131,8 +135,8 @@ export function apiClientStart() {
       use_message_database: true,
       use_file_database: false,
       database_directory: '/db',
-      files_directory: '/',
-    },
+      files_directory: '/'
+    }
   });
   tdWebClient.send({ '@type': 'checkDatabaseEncryptionKey' });
 }
@@ -142,7 +146,7 @@ export const downloadFile = (fileId, priority = 1) =>
     '@type': 'downloadFile',
     file_id: fileId,
     priority,
-    synchronous: true,
+    synchronous: true
   });
 
 export const needToDownloadSmallPhoto = item =>
@@ -155,7 +159,7 @@ async function loadChats() {
       '@type': 'getChats',
       offset_order: '9223372036854775807',
       offset_chat_id: 0,
-      limit: 15,
+      limit: 15
     })
     .then(response => response.chat_ids || []);
 
@@ -164,7 +168,7 @@ async function loadChats() {
       apiClient
         .send({
           '@type': 'getChat',
-          chat_id: chatId,
+          chat_id: chatId
         })
         .then(transformObjectKeysSnakeToCamel)
     )
@@ -203,7 +207,7 @@ async function loadChats() {
       return apiClient
         .send({
           '@type': 'readFile',
-          file_id: chat.photo.small.id,
+          file_id: chat.photo.small.id
         })
         .then(response => {
           const blob = response.data;
@@ -225,14 +229,14 @@ export async function loadBasicGroupsByIds(groupsIds) {
       apiClient
         .send({
           '@type': 'getBasicGroup',
-          basic_group_id: groupId,
+          basic_group_id: groupId
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    groups: { ...getState().groups, ...normalize(groupsList) },
+    groups: { ...getState().groups, ...normalize(groupsList) }
   });
 }
 
@@ -242,14 +246,14 @@ export async function loadSuperGroupsByIds(superGroupsIds) {
       apiClient
         .send({
           '@type': 'getSupergroup',
-          supergroup_id: groupId,
+          supergroup_id: groupId
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    groups: { ...getState().groups, ...normalize(superGroupsList) },
+    groups: { ...getState().groups, ...normalize(superGroupsList) }
   });
 }
 
@@ -259,14 +263,14 @@ export async function loadUsersByIds(userIds) {
       apiClient
         .send({
           '@type': 'getUser',
-          user_id: userId,
+          user_id: userId
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    users: { ...getState().users, ...normalize(usersList) },
+    users: { ...getState().users, ...normalize(usersList) }
   });
 
   await Promise.all(
@@ -286,7 +290,7 @@ export async function loadUsersByIds(userIds) {
       return apiClient
         .send({
           '@type': 'readFile',
-          file_id: profilePhoto.small.id,
+          file_id: profilePhoto.small.id
         })
         .then(response => {
           const blob = response.data;
@@ -300,14 +304,14 @@ export async function loadUsersByIds(userIds) {
   );
 
   setState({
-    users: { ...getState().users, ...normalize(usersWithProfilePhoto) },
+    users: { ...getState().users, ...normalize(usersWithProfilePhoto) }
   });
 }
 
 export async function loadChat(currentChat, isUpdate = false) {
   if (!isUpdate) {
     setState({
-      currentChat,
+      currentChat
     });
   }
 
@@ -317,21 +321,21 @@ export async function loadChat(currentChat, isUpdate = false) {
       chat_id: currentChat.id,
       from_message_id: currentChat.lastMessage.id,
       offset: 0,
-      limit: 20,
+      limit: 20
     })
     .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
 
   if (historyMessages && historyMessages.length > 0) {
     const messages = [
       ...historyMessages.reverse(),
-      transformObjectKeysSnakeToCamel(currentChat.lastMessage),
+      transformObjectKeysSnakeToCamel(currentChat.lastMessage)
     ];
 
     setState({
       currentChat: {
         ...currentChat,
-        messages,
-      },
+        messages
+      }
     });
 
     const userIds = [];
