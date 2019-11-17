@@ -224,11 +224,6 @@ const getMessageBody = content => {
   const messageType = content['@type'];
 
   switch (messageType) {
-    case 'messageText':
-      if (content.text.entities && content.text.entities.length) {
-        return getFormattedText(content);
-      }
-      return <span>{content.text.text}</span>;
     case 'messageDocument':
       const extension = content.document.file_name.split('.').pop();
       return (
@@ -253,7 +248,7 @@ const getMessageBody = content => {
         </div>
       );
     default:
-      return 'Wip';
+      return <span>'Wip'</span>;
   }
 };
 
@@ -285,6 +280,9 @@ const ChatMessages = ({ messages, type }, users) => {
 
           const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
 
+          const formattedTextContent = content['@type'] === "messageText"
+            && getFormattedText(content);
+
           return (
             <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
               {showFullMessage ? (
@@ -307,7 +305,10 @@ const ChatMessages = ({ messages, type }, users) => {
                   ''
                 )}
                 <div class="msg-text">
-                  {getMessageBody(content)}
+                  {formattedTextContent
+                    ? <div innerHTML={formattedTextContent}></div>
+                    : getMessageBody(content)
+                  }
                   <div class="msg-time">
                     <span>{getDate(date)}</span>
                   </div>

@@ -66,10 +66,16 @@ export const getLastMessageStr = content => {
       return content.text.text;
     case "messageSticker":
       return "Sticker";
+    case "messageAudio":
+      return "Audio";
     case "messageDocument":
       return "Document";
     case "messagePhoto":
       return "Photo";
+    case "messagePoll":
+        return "Poll";
+    case "messageVideo":
+        return "Video";
     default:
       return "Message";
   }
@@ -85,6 +91,8 @@ export const getFormattedText = content => {
   const formattedText = content.text.text;
   const entities = [];
   let i = 0;
+  if (!content.text.entities) return formattedText;
+
   content.text.entities.forEach(ent => {
     entities.push(formattedText.substr(i, ent.offset - i));
 
