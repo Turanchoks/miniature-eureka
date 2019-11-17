@@ -76,13 +76,14 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
                   </div>
                   <div class="chat__info_row">
                     <div class="chat__last-message">
-                      {lastMessageSender && lastMessageSender.firstName ? (
-                        <span class="chat__last-message_from">
-                          {lastMessageSender.firstName}:{" "}
-                        </span>
-                      ) : (
-                        ""
-                      )}
+                      {lastMessageSender
+                        && !lastMessage.is_outgoing
+                        && lastMessageSender.firstName 
+                        ? <span class="chat__last-message_from">
+                            {lastMessageSender.firstName}:{" "}
+                          </span>
+                        : ""
+                      }
 
                       {getLastMessageStr(chat.lastMessage.content)}
                     </div>
