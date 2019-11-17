@@ -4,7 +4,7 @@ import {
   getBrowser,
   getOSName,
   transformObjectKeysSnakeToCamel,
-  normalize
+  normalize,
 } from './utils';
 import { setState, getState } from './state';
 import { push } from './router';
@@ -42,13 +42,13 @@ let DEFAULT_TD_WEB_CLIENT_OPTIONS = {
   readOnly: false,
   isBackground: false,
   useDatabase: false,
-  wasmUrl: `${WASM_FILE_NAME}?_sw-precache=${WASM_FILE_HASH}`
+  wasmUrl: `${WASM_FILE_NAME}?_sw-precache=${WASM_FILE_HASH}`,
 };
 
 const tdWebClient = new TdWebClient({
   ...DEFAULT_TD_WEB_CLIENT_OPTIONS,
   api_id: TELEGRAM_API_ID,
-  api_hash: TELEGRAM_API_HASH
+  api_hash: TELEGRAM_API_HASH,
 });
 
 const databaseExistsCheck = false;
@@ -106,7 +106,7 @@ tdWebClient.onUpdate = update => {
         loadChat(
           {
             ...getState().currentChat,
-            lastMessage: last_message
+            lastMessage: last_message,
           },
           true
         );
@@ -136,8 +136,8 @@ export function apiClientStart() {
       use_message_database: true,
       use_file_database: false,
       database_directory: '/db',
-      files_directory: '/'
-    }
+      files_directory: '/',
+    },
   });
   tdWebClient.send({ '@type': 'checkDatabaseEncryptionKey' });
 }
@@ -147,7 +147,7 @@ export const downloadFile = (fileId, priority = 1) =>
     '@type': 'downloadFile',
     file_id: fileId,
     priority,
-    synchronous: true
+    synchronous: true,
   });
 
 export const needToDownloadSmallPhoto = item =>
@@ -160,7 +160,7 @@ export async function loadChats() {
       '@type': 'getChats',
       offset_order: '9223372036854775807',
       offset_chat_id: 0,
-      limit: 15
+      limit: 15,
     })
     .then(response => response.chat_ids || []);
 
@@ -169,7 +169,7 @@ export async function loadChats() {
       apiClient
         .send({
           '@type': 'getChat',
-          chat_id: chatId
+          chat_id: chatId,
         })
         .then(transformObjectKeysSnakeToCamel)
     )
@@ -218,7 +218,7 @@ export async function loadChats() {
       return apiClient
         .send({
           '@type': 'readFile',
-          file_id: chat.photo.small.id
+          file_id: chat.photo.small.id,
         })
         .then(response => {
           const blob = response.data;
@@ -240,14 +240,14 @@ export async function loadBasicGroupsByIds(groupsIds) {
       apiClient
         .send({
           '@type': 'getBasicGroup',
-          basic_group_id: groupId
+          basic_group_id: groupId,
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    groups: { ...getState().groups, ...normalize(groupsList) }
+    groups: { ...getState().groups, ...normalize(groupsList) },
   });
 }
 
@@ -257,14 +257,14 @@ export async function loadSuperGroupsByIds(superGroupsIds) {
       apiClient
         .send({
           '@type': 'getSupergroup',
-          supergroup_id: groupId
+          supergroup_id: groupId,
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    groups: { ...getState().groups, ...normalize(superGroupsList) }
+    groups: { ...getState().groups, ...normalize(superGroupsList) },
   });
 }
 
@@ -274,14 +274,14 @@ export async function loadUsersByIds(userIds) {
       apiClient
         .send({
           '@type': 'getUser',
-          user_id: userId
+          user_id: userId,
         })
         .then(transformObjectKeysSnakeToCamel)
     )
   );
 
   setState({
-    users: { ...getState().users, ...normalize(usersList) }
+    users: { ...getState().users, ...normalize(usersList) },
   });
 
   await Promise.all(
@@ -301,7 +301,7 @@ export async function loadUsersByIds(userIds) {
       return apiClient
         .send({
           '@type': 'readFile',
-          file_id: profilePhoto.small.id
+          file_id: profilePhoto.small.id,
         })
         .then(response => {
           const blob = response.data;
@@ -315,7 +315,7 @@ export async function loadUsersByIds(userIds) {
   );
 
   setState({
-    users: { ...getState().users, ...normalize(usersWithProfilePhoto) }
+    users: { ...getState().users, ...normalize(usersWithProfilePhoto) },
   });
 }
 
@@ -323,6 +323,36 @@ const getCurrentChatIdFromPath = () => {
   const { pathname } = location;
   return pathname.split('/')[1];
 };
+
+export async function loadChatPage(currentChat, offset = 0) {
+  const mainEl = document.querySelector('#main');
+  const scrollBeforeUpdate = mainEl.scrollHeight;
+  setState({
+    loadingPage: true,
+  });
+
+  if (currentChat && currentChat.messages) {
+    const historyMessages = await apiClient
+      .send({
+        '@type': 'getChatHistory',
+        chat_id: currentChat.id,
+        from_message_id: currentChat.messages[0].id,
+        offset: 0,
+        limit: 20,
+      })
+      .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
+
+    if (historyMessages && historyMessages.length > 0) {
+      await loadAdditionalChatMessagesInfo(currentChat, historyMessages, true);
+    }
+  }
+
+  mainEl.scrollTop = mainEl.scrollHeight - scrollBeforeUpdate;
+
+  setState({
+    loadingPage: false,
+  });
+}
 
 export async function loadChat(currentChat, isUpdate = false) {
   if (!isUpdate) {
@@ -335,7 +365,7 @@ export async function loadChat(currentChat, isUpdate = false) {
     }
 
     setState({
-      currentChat
+      currentChat,
     });
   }
 
@@ -345,123 +375,12 @@ export async function loadChat(currentChat, isUpdate = false) {
       chat_id: currentChat.id,
       from_message_id: currentChat.lastMessage.id,
       offset: 0,
-      limit: 20
+      limit: 20,
     })
     .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
 
   if (historyMessages && historyMessages.length > 0) {
-    const messages = [
-      ...historyMessages.reverse(),
-      transformObjectKeysSnakeToCamel(currentChat.lastMessage)
-    ];
-
-    const quoteMessages = await apiClient
-      .send({
-        '@type': 'getMessages',
-        chat_id: currentChat.id,
-        message_ids: historyMessages.reduce((res, message) => {
-          if (message.replyToMessageId !== 0) {
-            res.push(message.replyToMessageId);
-          }
-          return res;
-        }, [])
-      })
-      .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
-
-    setState({
-      currentChat: {
-        ...currentChat,
-        messages
-      },
-      quoteMessages: {
-        ...getState().quoteMessages,
-        ...normalize(quoteMessages)
-      }
-    });
-
-    const userIds = [];
-    for (const message of messages) {
-      const { senderUserId } = message;
-      if (senderUserId && !userIds.includes[senderUserId]) {
-        userIds.push(senderUserId);
-      }
-    }
-
-    const groupsIds = [];
-    if (
-      currentChat.type &&
-      currentChat.type['@type'] === 'chatTypeBasicGroup'
-    ) {
-      groupsIds.push(currentChat.type.basic_group_id);
-    }
-
-    const superGroupsIds = [];
-    if (
-      currentChat.type &&
-      currentChat.type['@type'] === 'chatTypeSupergroup'
-    ) {
-      superGroupsIds.push(currentChat.type.supergroup_id);
-    }
-
-    loadSuperGroupsByIds(superGroupsIds);
-    loadBasicGroupsByIds(groupsIds);
-    loadUsersByIds(userIds);
-
-    const messagePhotoIds = [];
-    const messagePhotos = {};
-    for (const message of messages) {
-      const { content } = message;
-      const messageType = content['@type'];
-      if (messageType === 'messagePhoto') {
-        const {
-          photo: { sizes }
-        } = content;
-        const firstPhoto = sizes[0] && sizes[0].photo;
-        if (firstPhoto) {
-          messagePhotoIds.push(firstPhoto.id);
-          messagePhotos[firstPhoto.id] = firstPhoto;
-        }
-      }
-    }
-
-    if (messagePhotoIds.length > 0) {
-      await Promise.all(
-        messagePhotoIds.map(id => {
-          const messagePhoto = messagePhotos[id];
-          if (
-            !messagePhoto.local.is_downloading_completed &&
-            !messagePhoto.local.is_downloading_active
-          ) {
-            return downloadFile(id);
-          }
-        })
-      );
-      await Promise.all(
-        messagePhotoIds.map(id => {
-          return apiClient
-            .send({
-              '@type': 'readFile',
-              file_id: id
-            })
-            .then(response => {
-              const blob = response.data;
-              let imgSrc = '';
-              if (blob) {
-                imgSrc = URL.createObjectURL(blob);
-              }
-              messagePhotos[id] = {
-                ...messagePhotos[id],
-                imgSrc
-              };
-            });
-        })
-      );
-
-      setState({
-        messagePhotos
-      });
-    }
-
+    await loadAdditionalChatMessagesInfo(currentChat, historyMessages);
     if (!isUpdate) {
       // Scroll to bottom in messages list after chats loaded
       setTimeout(
@@ -471,3 +390,117 @@ export async function loadChat(currentChat, isUpdate = false) {
     }
   }
 }
+
+const loadAdditionalChatMessagesInfo = async (
+  currentChat,
+  historyMessages,
+  mergeChats
+) => {
+  const messages = mergeChats
+    ? [...historyMessages.reverse(), ...currentChat.messages]
+    : [
+        ...historyMessages.reverse(),
+        transformObjectKeysSnakeToCamel(currentChat.lastMessage),
+      ];
+
+  const quoteMessages = await apiClient
+    .send({
+      '@type': 'getMessages',
+      chat_id: currentChat.id,
+      message_ids: historyMessages.reduce((res, message) => {
+        if (message.replyToMessageId !== 0) {
+          res.push(message.replyToMessageId);
+        }
+        return res;
+      }, []),
+    })
+    .then(({ messages }) => messages.map(transformObjectKeysSnakeToCamel));
+
+  setState({
+    currentChat: {
+      ...currentChat,
+      messages,
+    },
+    quoteMessages: {
+      ...getState().quoteMessages,
+      ...normalize(quoteMessages),
+    },
+  });
+
+  const userIds = [];
+  for (const message of messages) {
+    const { senderUserId } = message;
+    if (senderUserId && !userIds.includes[senderUserId]) {
+      userIds.push(senderUserId);
+    }
+  }
+
+  const groupsIds = [];
+  if (currentChat.type && currentChat.type['@type'] === 'chatTypeBasicGroup') {
+    groupsIds.push(currentChat.type.basic_group_id);
+  }
+
+  const superGroupsIds = [];
+  if (currentChat.type && currentChat.type['@type'] === 'chatTypeSupergroup') {
+    superGroupsIds.push(currentChat.type.supergroup_id);
+  }
+
+  loadSuperGroupsByIds(superGroupsIds);
+  loadBasicGroupsByIds(groupsIds);
+  loadUsersByIds(userIds);
+
+  const messagePhotoIds = [];
+  const messagePhotos = {};
+  for (const message of messages) {
+    const { content } = message;
+    const messageType = content['@type'];
+    if (messageType === 'messagePhoto') {
+      const {
+        photo: { sizes },
+      } = content;
+      const firstPhoto = sizes[0] && sizes[0].photo;
+      if (firstPhoto) {
+        messagePhotoIds.push(firstPhoto.id);
+        messagePhotos[firstPhoto.id] = firstPhoto;
+      }
+    }
+  }
+
+  if (messagePhotoIds.length > 0) {
+    await Promise.all(
+      messagePhotoIds.map(id => {
+        const messagePhoto = messagePhotos[id];
+        if (
+          !messagePhoto.local.is_downloading_completed &&
+          !messagePhoto.local.is_downloading_active
+        ) {
+          return downloadFile(id);
+        }
+      })
+    );
+    await Promise.all(
+      messagePhotoIds.map(id => {
+        return apiClient
+          .send({
+            '@type': 'readFile',
+            file_id: id,
+          })
+          .then(response => {
+            const blob = response.data;
+            let imgSrc = '';
+            if (blob) {
+              imgSrc = URL.createObjectURL(blob);
+            }
+            messagePhotos[id] = {
+              ...messagePhotos[id],
+              imgSrc,
+            };
+          });
+      })
+    );
+
+    setState({
+      messagePhotos,
+    });
+  }
+};
