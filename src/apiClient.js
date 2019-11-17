@@ -397,7 +397,7 @@ const loadAdditionalChatMessagesInfo = async (
   mergeChats
 ) => {
   const messages = mergeChats
-    ? [...historyMessages.reverse(), currentChat.messages]
+    ? [...historyMessages.reverse(), ...currentChat.messages]
     : [
         ...historyMessages.reverse(),
         transformObjectKeysSnakeToCamel(currentChat.lastMessage),
