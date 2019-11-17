@@ -13,12 +13,11 @@
 .country-code-select:hover {
   border-color: #000;
 }
-
-.country-code-select.active {
-  border: 1px solid #4ea4f6;
-  border-radius: 10px;
-  padding: 14px;
-  cursor: pointer;
+.country-code-select__open {
+  border-color: #4ea4f6;
+}
+.country-code-select__open:hover {
+  border-color: #4ea4f6;
 }
 
 .country-code-list {
@@ -27,7 +26,7 @@
   position: absolute;
   width: 100%;
   z-index: 100;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 11px 0px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   height: 300px;
   overflow: scroll;
@@ -36,7 +35,7 @@
 }
 
 .country-code-list__option {
-  padding: 5px 10px;
+  padding: 15px;
   cursor: pointer;
   display: flex;
   align-items: baseline;
@@ -64,11 +63,11 @@
 
 .country-code-list__option.hovered,
 .country-code-list__option:hover {
-  background: #dddddd;
+  background: rgb(242, 242, 243);
 }
 
 .dialling-code {
-  color: #95a0aa;
+  color: rgb(101, 106, 110);
 }
 
 .country-name {
@@ -83,6 +82,15 @@
 
 .hide {
   display: none;
+}
+.chevron-down {
+  width: 24px;
+  height: 24px;
+}
+.chevron-down > svg {
+  width: 24px;
+  height: 24px;
+  fill: #4ea4f6;
 }
 
 .arrow {

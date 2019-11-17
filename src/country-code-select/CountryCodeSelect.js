@@ -17,14 +17,14 @@ const searchCountries = e => {
     : countries;
   setState({
     countries: searchResult,
-    countryCodeSelectPlaceholder: searchResult[0] ? searchResult[0] : '',
+    countryCodeSelectPlaceholder: searchResult[0] ? searchResult[0] : ''
   });
 };
 
 document.onclick = e => {
   if (selectRef && selectRef.contains(e.target)) return;
   setState({
-    countryCodeSelectOpen: false,
+    countryCodeSelectOpen: false
   });
 };
 
@@ -33,9 +33,9 @@ export const CountryCodeSelect = ({
     countryCodeSelectValue: value,
     countryCodeSelectOpen: open,
     countryCodeSelectPlaceholder: placeholder,
-    countries,
+    countries
   },
-  classes,
+  classes
 }) => {
   return (
     <div
@@ -62,17 +62,21 @@ export const CountryCodeSelect = ({
             setState({
               countryCodeSelectOpen: false,
               countryCodeSelectValue: placeholder,
-              countries,
+              countries
             });
           }
         }}
       />
       <div
-        class="country-code-select"
+        class={
+          open
+            ? 'country-code-select country-code-select__open'
+            : 'country-code-select'
+        }
         onclick={() => {
           if (inputRef) inputRef.focus();
           setState({
-            countryCodeSelectOpen: !open,
+            countryCodeSelectOpen: !open
           });
         }}
       >
@@ -111,12 +115,12 @@ export const CountryCodeSelect = ({
                   setState({
                     countryCodeSelectOpen: false,
                     countryCodeSelectValue: item,
-                    countries,
+                    countries
                   });
                 }}
                 onmouseover={() =>
                   setState({
-                    countryCodeSelectPlaceholder: item,
+                    countryCodeSelectPlaceholder: item
                   })
                 }
               >
