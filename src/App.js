@@ -17,7 +17,7 @@ const ric = window.requestIdleCallback || (cb => setTimeout(cb, 0));
 const CheckingYourStatus = () => {
   return (
     <div class="flex-wrapper flex-wrapper_center">
-      <div class="loading" />
+      <div class="loader" />
     </div>
   );
 };
@@ -63,7 +63,6 @@ for (const [loader, name] of imports) {
 
 export const App = state => {
   const { isAuthorized, loading, step } = state;
-  // return Components.SignUpPassword(state);
 
   switch (step) {
     case 'phone input':

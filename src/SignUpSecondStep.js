@@ -1,4 +1,4 @@
-import { setState, setLoading } from './state';
+import { setState, getState, setLoading } from './state';
 import { apiClient } from './apiClient';
 import TwoFactorSetupMonkeyIdle from './Monkey/TwoFactorSetupMonkeyIdle.tgs';
 import TwoFactorSetupMonkeyTracking from './Monkey/TwoFactorSetupMonkeyTracking.tgs';
@@ -27,10 +27,17 @@ const submitCode = code => {
       code: code,
     })
     .then(r => {
-      setState({
-        loading: false,
-        step: 'valid code',
-      });
+      const state = getState();
+      if (state.step !== "waiting password") {
+        setState({
+          loading: false,
+          step: 'valid code',
+        });
+      } else {
+        setState({
+          loading: false,
+        });
+      }
     });
 };
 

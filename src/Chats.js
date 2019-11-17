@@ -265,7 +265,7 @@ const getMessageBody = (content, messagePhotos) => {
       return <div>messagePhoto</div>;
     }
     default:
-      return <span>'Wip'</span>;
+      return <span>Wip</span>;
   }
 };
 
