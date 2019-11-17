@@ -30,7 +30,6 @@ button:focus {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  z-index: 1;
 }
 .btn > span {
   z-index: 2;
@@ -39,22 +38,20 @@ button:focus {
   transition: box-shadow 0.2s ease;
 }
 .btn:before {
-  content: "";
-  height: 100%;
-  width: 100%;
+  content: '';
   position: absolute;
-  border-radius: 100%;
-  top: 0;
-  left: 0;
-  transform: scale(1.1);
+  padding: 50%;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1.5);
   opacity: 0;
-  transition: 0.5s ease transform, 1s ease opacity;
-  z-index: 1;
+  transition: transform 0.8s, opacity 0.8s;
 }
 .btn:active:before {
-  transform: scale(0);
-  opacity: 1;
   transition: 0s;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 1;
 }
 .btn:disabled {
   background: var(--color-grey);
