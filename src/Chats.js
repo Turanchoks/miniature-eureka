@@ -84,6 +84,7 @@ export const Chats = ({ chats, currentChat, users, groups }) => {
 
             return (
               <div
+                key={chat.id}
                 class={chatClass}
                 onclick={() => {
                   push(chat.id);
@@ -280,11 +281,14 @@ const ChatMessages = ({ messages, type }, users) => {
 
           const showFullMessage = !isPrivateChat && senderUser && !isOutgoing;
 
-          const formattedTextContent = content['@type'] === "messageText"
-            && getFormattedText(content);
+          const formattedTextContent =
+            content['@type'] === 'messageText' && getFormattedText(content);
 
           return (
-            <div class={`${messageWrapperClass} ${extraPaddedClass}`}>
+            <div
+              key={date}
+              class={`${messageWrapperClass} ${extraPaddedClass}`}
+            >
               {showFullMessage ? (
                 <div class="msg-avatar">
                   {senderUser.profilePhotoSrc ? (
@@ -305,10 +309,11 @@ const ChatMessages = ({ messages, type }, users) => {
                   ''
                 )}
                 <div class="msg-text">
-                  {formattedTextContent
-                    ? <div innerHTML={formattedTextContent}></div>
-                    : getMessageBody(content)
-                  }
+                  {formattedTextContent ? (
+                    <div innerHTML={formattedTextContent}></div>
+                  ) : (
+                    getMessageBody(content)
+                  )}
                   <div class="msg-time">
                     <span>{getDate(date)}</span>
                   </div>

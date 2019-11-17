@@ -47,7 +47,6 @@ for (const [loader, name] of imports) {
       // })
       .then(module => {
         Components[name] = module[name];
-        console.log(requireUpdate);
         if (requireUpdate) {
           // force update
           setState({
